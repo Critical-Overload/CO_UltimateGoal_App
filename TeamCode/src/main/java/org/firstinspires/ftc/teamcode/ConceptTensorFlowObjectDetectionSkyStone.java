@@ -51,8 +51,7 @@ import java.util.List;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-@TeleOp(name = "Concept: TensorFlow Object Detection", group = "Concept")
-@Disabled
+@TeleOp(name = "Concept: SkyStone Object Detection", group = "Concept")
 public class ConceptTensorFlowObjectDetectionSkyStone extends LinearOpMode {
     private static final String TFOD_MODEL_ASSET = "Skystone.tflite";
     private static final String LABEL_FIRST_ELEMENT = "Stone";
@@ -70,8 +69,8 @@ public class ConceptTensorFlowObjectDetectionSkyStone extends LinearOpMode {
      * Once you've obtained a license key, copy the string from the Vuforia web site
      * and paste it in to your code on the next line, between the double quotes.
      */
-    private static final String VUFORIA_KEY =
-            " -- YOUR NEW VUFORIA KEY GOES HERE  --- ";
+    private static final String VUFORIA_KEY = "AeXjUy3/////AAABmbHLSgwTzU5tnItQeMYIKBuJtzLC3Yjgadn90RIg4wpjZJxXPoAwCZmsm+bAMXon60mNlk3UZvSNQaabvijg0UZ+9vB/U+d8CeHrLU4FziM5JseM/zIMAdJoePSg1sli9hlC1LYIPMd6uCYwuS8QZvkhHkBisttfhafsExbOSeIP/a3sBqDAxQ7rm1SIvWxdGAgu2iUrLVMx6affe6GAtcFMRhIVWLj+m6XyRnswbtS/Sh4hNZXoBTJn4py4rhZ4iouKw6SvZvYCokuqxObpBxG8Ni0pLcbtctO5+8xtb47Y4uwkkI9t7L4IUfntsQzaMcd6eMtoPcYIhLKhiydVa8iG8u9aqJCExcdS7BSKZpTf";
+
 
     /**
      * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
@@ -121,12 +120,24 @@ public class ConceptTensorFlowObjectDetectionSkyStone extends LinearOpMode {
 
                       // step through the list of recognitions and display boundary info.
                       int i = 0;
+                      String skystonePos;
                       for (Recognition recognition : updatedRecognitions) {
                         telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
                         telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
                                           recognition.getLeft(), recognition.getTop());
                         telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
                                 recognition.getRight(), recognition.getBottom());
+                        double skyStonePosRaw = recognition.getLeft();
+                        if(recognition.getLabel() == "Skystone"){
+                            if(skyStonePosRaw > 600){
+                                skystonePos = "Right";
+                            }else if(skyStonePosRaw < 200){
+                                skystonePos = "Left";
+                            }else{
+                                skystonePos = "Center";
+                            }
+                            telemetry.addData("Skystone Pos", skystonePos);
+                        }
                       }
                       telemetry.update();
                     }
