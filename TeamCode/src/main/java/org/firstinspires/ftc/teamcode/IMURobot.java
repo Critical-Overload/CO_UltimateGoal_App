@@ -272,6 +272,19 @@ public class IMURobot {
     }
 
     /**
+     * Tank strafe, can move in any direction, using correction
+     * @param leftPower power for front left and back right motors
+     * @param rightPower power for front right and back left motors
+     * @param correction
+     */
+    public void correctedTankStrafe(double leftPower, double rightPower, double correction){
+        motorFrontLeft.setPower(leftPower + correction);
+        motorFrontRight.setPower(rightPower - correction);
+        motorBackLeft.setPower(rightPower + correction);
+        motorBackRight.setPower(leftPower - correction);
+    }
+
+    /**
      * Drive straight using the gyro
      * @param power power
      * @param seconds time to run
@@ -292,6 +305,41 @@ public class IMURobot {
             double correction = getCorrection();
             //Use the correction to adjust robot power so robot drives straight
             tankDrive(power + correction, power - correction);
+        }
+        completeStop();
+        //Wait .5 seconds to ensure robot is stopped before continuing
+        Thread.sleep(500);
+        resetAngle();
+    }
+
+    /**
+     * Strafe in any direction using gyro to keep robot facing straight forward
+     * @param power power
+     * @param direction direction to strafe, in degrees (0 = right, 180 = left)
+     * @param seconds time to run
+     * @throws InterruptedException if the robot is stopped
+     */
+    public void gyroStrafe(double power, double direction, int seconds) throws InterruptedException{
+        //restart angle tracking
+        resetAngle();
+
+        //convert direction (degrees) into radians
+        double newDirection = direction * Math.PI/180;
+        //calculate powers needed using direction
+        double leftPower = Math.cos(newDirection) * power;
+        double rightPower = Math.sin(newDirection) * power;
+
+        //create an ElapsedTime object to track the time the robot moves
+        ElapsedTime timer = new ElapsedTime();
+        //restart time tracking
+        timer.reset();
+
+        //strafe using gyro to keep robot facing straight for
+        while(timer.seconds() < seconds && opMode.opModeIsActive()){
+            //Get a correction
+            double correction = getCorrection();
+            //Use the correction to adjust robot power so robot faces straight
+            correctedTankStrafe(leftPower, rightPower, correction);
         }
         completeStop();
         //Wait .5 seconds to ensure robot is stopped before continuing
