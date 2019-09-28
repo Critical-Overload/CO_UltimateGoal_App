@@ -45,8 +45,9 @@ public class IMURobotTest extends LinearOpMode {
         sleep(500); //wait
         robot.gyroDrive(0.3, 5);//go forward with gyro for 5 seconds
         sleep(500);//wait
-        robot.tankDrive(0.3, 0.3);//set power to motors
-        sleep(5000);//drive for 5 seconds
+        robot.gyroStrafe(0.3, 180, 5);//strafe left for 5 seconds
+        sleep(500);//wait
+        robot.gyroStrafe(0.3, 0, 5); //strafe right for 5 seconds
         robot.completeStop();//stop
     }
 }

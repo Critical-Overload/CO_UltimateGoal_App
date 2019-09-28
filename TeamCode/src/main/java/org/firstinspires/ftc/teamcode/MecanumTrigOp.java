@@ -54,9 +54,9 @@ public class MecanumTrigOp extends LinearOpMode
             double rotation = gamepad1.left_stick_x;
             
             motorFrontLeft.setPower((r * Math.cos(angle) + rotation)*powerMod);
-            motorBackRight.setPower((r * Math.cos(angle) - rotation)*powerMod);
-            motorFrontRight.setPower((r * Math.sin(angle) - rotation)*powerMod);
-            motorBackLeft.setPower((r * Math.sin(angle) + rotation)*powerMod);
+            motorBackRight.setPower((r * Math.cos(angle) - rotation)*powerMod*.5);
+            motorFrontRight.setPower((r * Math.sin(angle) + rotation)*powerMod);
+            motorBackLeft.setPower((r * Math.sin(angle) - rotation)*powerMod*.5);
             
 
             idle();

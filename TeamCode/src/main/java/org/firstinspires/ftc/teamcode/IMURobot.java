@@ -36,7 +36,7 @@ public class IMURobot {
     private double globalAngle;
 
     //Declare and initialize gain to be used for straight driving
-    private double gain = 0.1;
+    private double gain = 0.03;
 
     //Declare an opmode and a telemetry object
     private LinearOpMode opMode;
@@ -267,8 +267,8 @@ public class IMURobot {
     public void tankDrive(double leftPower, double rightPower){
         motorFrontLeft.setPower(leftPower);
         motorFrontRight.setPower(rightPower);
-        motorBackLeft.setPower(leftPower);
-        motorBackRight.setPower(rightPower);
+        motorBackLeft.setPower(leftPower*.5);
+        motorBackRight.setPower(rightPower*.5);
     }
 
     /**
