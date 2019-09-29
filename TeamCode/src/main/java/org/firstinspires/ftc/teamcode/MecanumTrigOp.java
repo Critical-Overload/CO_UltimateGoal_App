@@ -29,11 +29,13 @@ public class MecanumTrigOp extends LinearOpMode
         motorBackRight= hardwareMap.dcMotor.get("BR");
         motorBackLeft = hardwareMap.dcMotor.get("BL");
 
-        motorBackLeft.setDirection(DcMotor.Direction.REVERSE);
         motorBackRight.setDirection(DcMotor.Direction.REVERSE);
+        motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
+
 
 
         double powerMod = 1.0;
+        double speedCal = 0.5;
 
         waitForStart();
 
@@ -49,16 +51,28 @@ public class MecanumTrigOp extends LinearOpMode
                 powerMod = 1.0;
             }
 
-            double angle = Math.atan2(gamepad1.right_stick_y, gamepad1.right_stick_x) - 3*(Math.PI)/4;
+            double angle = Math.atan2(gamepad1.right_stick_y, gamepad1.right_stick_x) - (Math.PI)/4;
             double r = Math.hypot(gamepad1.right_stick_x, gamepad1.right_stick_y);
             double rotation = gamepad1.left_stick_x;
-            
-            motorFrontLeft.setPower((r * Math.cos(angle) + rotation)*powerMod);
-            motorBackRight.setPower((r * Math.cos(angle) - rotation)*powerMod*.5);
-            motorFrontRight.setPower((r * Math.sin(angle) + rotation)*powerMod);
-            motorBackLeft.setPower((r * Math.sin(angle) - rotation)*powerMod*.5);
-            
 
+            double powerOne = r * Math.cos(angle)*powerMod;
+            double powerTwo = r * Math.sin(angle)*powerMod;
+
+            if (powerOne < 0.8 && powerOne > -0.8){
+                speedCal = 0.6;
+            }else{
+                speedCal = 0.49;
+            }
+            
+            motorFrontLeft.setPower((powerOne - rotation)*powerMod);
+            motorBackRight.setPower((powerOne + rotation)*powerMod*speedCal);
+            motorFrontRight.setPower((powerTwo + rotation)*powerMod);
+            motorBackLeft.setPower((powerTwo - rotation)*powerMod*speedCal);
+
+            telemetry.addData("power1", powerOne);
+            telemetry.addData("power2", powerTwo);
+
+            telemetry.update();
             idle();
         }
     }
