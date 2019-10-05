@@ -150,7 +150,7 @@ public class IMUAutonomousTest extends LinearOpMode {
                                 }
                             }
 
-
+/*
                             if (goldMineralX != -1 || silverMineral1X != -1 || silverMineral2X != -1) {
                                 if (silverMineral1X < silverMineral2X) {
                                     telemetry.addData("Gold Mineral Position", "Left");
@@ -168,16 +168,22 @@ public class IMUAutonomousTest extends LinearOpMode {
                                     robot.gyroDrive(-0.5, 5);
                                 }
                             }
+
+ */
                         }
                         telemetry.update();
                     }
                 }
             }
+
+
+
         }
 
         if (tfod != null) {
             tfod.shutdown();
         }
+
     }
 
     /**

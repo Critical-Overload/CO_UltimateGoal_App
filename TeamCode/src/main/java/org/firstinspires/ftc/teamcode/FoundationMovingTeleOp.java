@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
+@TeleOp(name = "FoundationMovingTest")
 public class FoundationMovingTeleOp extends LinearOpMode {
 
     //Declare motors and servos
@@ -18,12 +21,15 @@ public class FoundationMovingTeleOp extends LinearOpMode {
         //Initialize motors and servos
         motorLeft = hardwareMap.dcMotor.get("left");
         motorRight = hardwareMap.dcMotor.get("right");
+        motorRight.setDirection(DcMotor.Direction.REVERSE);
 
         leftServo = hardwareMap.servo.get("l");
         rightServo = hardwareMap.servo.get("r");
 
-        leftServo.setPosition(0.8);
-        rightServo.setPosition(0.2);
+        leftServo.setPosition(0.1);
+        rightServo.setPosition(0.9);
+
+        waitForStart();
 
         while(opModeIsActive()){
             motorLeft.setPower(gamepad1.left_stick_y);
@@ -36,6 +42,11 @@ public class FoundationMovingTeleOp extends LinearOpMode {
                 leftServo.setPosition(leftServo.getPosition() - 0.01);
                 rightServo.setPosition(rightServo.getPosition() + 0.01);
             }
+
+            telemetry.addData("leftServo", leftServo.getPosition());
+            telemetry.addData("rightServo", rightServo.getPosition());
+            telemetry.update();
+
         }
     }
 }

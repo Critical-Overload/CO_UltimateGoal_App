@@ -36,7 +36,7 @@ public class IMURobot {
     private double globalAngle;
 
     //Declare and initialize gain to be used for straight driving
-    private double gain = 0.03;
+    private double gain = 0.01;
 
     //Declare an opmode and a telemetry object
     private LinearOpMode opMode;
@@ -290,7 +290,7 @@ public class IMURobot {
      * @param seconds time to run
      * @throws InterruptedException if the robot is stopped
      */
-    public void gyroDrive(double power, int seconds) throws InterruptedException{
+    public void gyroDriveSec(double power, int seconds) throws InterruptedException{
         //restart angle tracking
         resetAngle();
 
@@ -312,19 +312,41 @@ public class IMURobot {
         resetAngle();
     }
 
+    public void gyroDriveCenti(double power, double Centimeters) throws InterruptedException{
+        //restart angle tracking
+        resetAngle();
+
+        //create an ElapsedTime object to track the time the robot moves
+        ElapsedTime timer = new ElapsedTime();
+        //restart time tracking
+        timer.reset();
+
+        //drive straight with gyro until timer reaches number of given seconds
+        while(timer.seconds() < Centimeters/52 && opMode.opModeIsActive()){
+            //Get a correction
+            double correction = getCorrection();
+            //Use the correction to adjust robot power so robot drives straight
+            tankDrive(power + correction, power - correction);
+        }
+        completeStop();
+        //Wait .5 seconds to ensure robot is stopped before continuing
+        Thread.sleep(500);
+        resetAngle();
+    }
+
     /**
      * Strafe in any direction using gyro to keep robot facing straight forward
      * @param power power
-     * @param direction direction to strafe, in degrees (0 = right, 180 = left)
+     * @param angle direction to strafe, in degrees (0 = right, 180 = left)
      * @param seconds time to run
      * @throws InterruptedException if the robot is stopped
      */
-    public void gyroStrafe(double power, double direction, int seconds) throws InterruptedException{
+    public void gyroStrafeSec(double power, double angle, int seconds) throws InterruptedException{
         //restart angle tracking
         resetAngle();
 
         //convert direction (degrees) into radians
-        double newDirection = direction * Math.PI/180;
+        double newDirection = angle * Math.PI/180;
         //calculate powers needed using direction
         double leftPower = Math.cos(newDirection) * power;
         double rightPower = Math.sin(newDirection) * power;
@@ -336,6 +358,34 @@ public class IMURobot {
 
         //strafe using gyro to keep robot facing straight for
         while(timer.seconds() < seconds && opMode.opModeIsActive()){
+            //Get a correction
+            double correction = getCorrection();
+            //Use the correction to adjust robot power so robot faces straight
+            correctedTankStrafe(leftPower, rightPower, correction);
+        }
+        completeStop();
+        //Wait .5 seconds to ensure robot is stopped before continuing
+        Thread.sleep(500);
+        resetAngle();
+    }
+
+    public void gyroStrafeCenti(double power, double angle, double Centimeters) throws InterruptedException{
+        //restart angle tracking
+        resetAngle();
+
+        //convert direction (degrees) into radians
+        double newDirection = angle * Math.PI/180;
+        //calculate powers needed using direction
+        double leftPower = Math.cos(newDirection) * power;
+        double rightPower = Math.sin(newDirection) * power;
+
+        //create an ElapsedTime object to track the time the robot moves
+        ElapsedTime timer = new ElapsedTime();
+        //restart time tracking
+        timer.reset();
+
+        //strafe using gyro to keep robot facing straight for
+        while(timer.seconds() < Centimeters/52 && opMode.opModeIsActive()){
             //Get a correction
             double correction = getCorrection();
             //Use the correction to adjust robot power so robot faces straight
