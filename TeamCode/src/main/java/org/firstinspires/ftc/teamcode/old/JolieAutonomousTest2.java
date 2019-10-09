@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.old;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -8,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 //The Label @Autonomous means it will appear in the Autonomous drop-down list when you open the
 // driver station.
 @Autonomous(name = "Jolie Autonomous Test2")
+@Disabled
 //You can insert @Disabled if you don't want it to appear when you are choosing an Op mode.
 public class JolieAutonomousTest2 extends LinearOpMode
 {

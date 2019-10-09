@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.old;
 // Imports are added automatically when you type in new code
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -9,7 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 //driver station. "Jolie Test" is the name it will display.
 @TeleOp(name = "Jolie TeleOp Test2")
 // If you didn't want this to appear on the list, you add @Disabled
-
+@Disabled
 // You put extends LinearOpMode at end because it helps us gain access to commands in the FTC SDK
 //for Linear OpModes
 public class JolieTeleOpTest2 extends LinearOpMode

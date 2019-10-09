@@ -50,6 +50,7 @@ import java.util.List;
  * is explained below.
  */
 @TeleOp(name = "PreciousMetalDetectionTest")
+@Disabled
 
 public class PreciousMetalDetectionTest extends LinearOpMode {
     private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";

@@ -74,6 +74,7 @@ import com.qualcomm.robotcore.util.Range;
  */
 
 @Autonomous
+@Disabled
 public class TheAutonomous extends LinearOpMode {
 
     /* Declare OpMode members. */

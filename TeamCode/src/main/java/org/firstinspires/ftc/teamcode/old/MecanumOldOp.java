@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.old;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.robot.Robot;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -14,6 +15,7 @@ Right Stick - Controls Right Side of Robot (Forward and Backwards)
  */
 
 @TeleOp(name = "MecanumTest")
+@Disabled
 public class MecanumOldOp extends LinearOpMode
 {
     //declare motors

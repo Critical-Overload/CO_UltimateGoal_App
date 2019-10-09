@@ -56,6 +56,7 @@ import java.util.List;
  * is explained below.
  */
 @Autonomous(name = "AutonomousCombinedTest")
+@Disabled
 public class AutonomousCombinedTest extends LinearOpMode {
 
     private DcMotor motorFrontRight;
