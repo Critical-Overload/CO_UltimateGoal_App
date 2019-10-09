@@ -150,26 +150,26 @@ public class IMUAutonomousTest extends LinearOpMode {
                                 }
                             }
 
-/*
+
                             if (goldMineralX != -1 || silverMineral1X != -1 || silverMineral2X != -1) {
                                 if (silverMineral1X < silverMineral2X) {
                                     telemetry.addData("Gold Mineral Position", "Left");
                                     robot.gyroTurn(70, 0.5);
-                                    robot.gyroDrive(-0.5, 5);
+                                    robot.gyroDriveSec(-0.5, 5);
 
                                 } else if (goldMineralX > silverMineral1X) {
                                     telemetry.addData("Gold Mineral Position", "Right");
                                     robot.gyroTurn(-10, 0.5);
-                                    robot.gyroDrive(-0.5, 5);
+                                    robot.gyroDriveSec(-0.5, 5);
 
                                 } else if(goldMineralX < silverMineral1X){
                                     telemetry.addData("Gold Mineral Position", "Center");
                                     robot.gyroTurn(15, 0.5);
-                                    robot.gyroDrive(-0.5, 5);
+                                    robot.gyroDriveSec(-0.5, 5);
                                 }
                             }
 
- */
+ 
                         }
                         telemetry.update();
                     }

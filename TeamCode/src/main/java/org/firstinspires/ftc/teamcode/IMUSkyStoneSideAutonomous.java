@@ -76,9 +76,9 @@ public class IMUSkyStoneSideAutonomous extends LinearOpMode {
         telemetry.addData("Status", "Ready");
         telemetry.update();
 
-        robot.gyroDriveCenti(1,1);
-        robot.gyroStrafeCenti(1,0,10);
-        robot.gyroDriveCenti(1,5);
+        robot.gyroDriveCm(1,1);
+        robot.gyroStrafeCm(1,0,10);
+        robot.gyroDriveCm(1,5);
 
         robot.completeStop();//stop
     }
