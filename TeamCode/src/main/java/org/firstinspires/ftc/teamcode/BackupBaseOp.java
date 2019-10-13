@@ -4,8 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@TeleOp(name = "MecanumTrigOp")
-public class MecanumTrigOp extends LinearOpMode {
+@TeleOp(name = "BackupBaseOp")
+public class BackupBaseOp extends LinearOpMode {
 
     private DcMotor motorFrontRight;
     private DcMotor motorFrontLeft;
@@ -19,15 +19,6 @@ public class MecanumTrigOp extends LinearOpMode {
         motorFrontLeft = hardwareMap.dcMotor.get("FL");
         motorBackLeft = hardwareMap.dcMotor.get("BL");
         motorBackRight = hardwareMap.dcMotor.get("BR");
-
-        motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
-        motorBackRight.setDirection(DcMotor.Direction.REVERSE);
-
-        motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
 
         double powerMod = 1.0;
 
@@ -43,19 +34,13 @@ public class MecanumTrigOp extends LinearOpMode {
             }else{
                 powerMod = 1.0;
             }
-            if(gamepad1.left_bumper){
-                motorFrontLeft.setPower(5);
-                motorFrontRight.setPower(-.5);
-                motorBackLeft.setPower(.5);
-                motorBackRight.setPower(-.5);
-            }
 
             double angle = Math.atan2(gamepad1.right_stick_y, gamepad1.right_stick_x) - (Math.PI/4);
             double r = Math.hypot(gamepad1.right_stick_x, gamepad1.right_stick_y);
             double rotation = gamepad1.left_stick_x;
 
-            double powerOne = r*Math.cos(angle);
-            double powerTwo = r*Math.sin(angle);
+            double powerOne = r*Math.sin(angle);
+            double powerTwo = r*Math.cos(angle);
 
             motorFrontLeft.setPower((powerOne + (rotation))*powerMod);
             motorFrontRight.setPower((powerTwo - (rotation))*powerMod);

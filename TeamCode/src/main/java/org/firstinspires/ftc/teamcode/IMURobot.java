@@ -313,7 +313,7 @@ public class IMURobot {
     }
 
     public void gyroDriveCm(double power, double cm) throws InterruptedException{
-        gyroDriveSec(power, cm/52);
+        gyroDriveSec(power, cm/(52*power));
     }
 
     /**

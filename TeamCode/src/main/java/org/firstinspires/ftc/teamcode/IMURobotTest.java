@@ -44,11 +44,11 @@ public class IMURobotTest extends LinearOpMode {
         sleep(500);
         robot.gyroTurn(-90, 0.3); //turn 120 degrees clockwise
         sleep(500); //wait
-        robot.gyroDriveSec(0.3, 5);//go forward with gyro for 5 seconds
+        robot.gyroDriveCm(0.3, 30);//go forward with gyro for 5 seconds
         sleep(500);//wait
-        robot.gyroStrafeSec(0.3, 90, 5);//strafe left for 5 seconds
+        robot.gyroStrafeCm(0.3, 0, 30);//strafe left for 5 seconds
         sleep(500);//wait
-        robot.gyroStrafeSec(0.3, 0, 5); //strafe right for 5 seconds
+        robot.gyroStrafeCm(0.3, 135, 30); //strafe right for 5 seconds
         robot.completeStop();//stop
 
 
