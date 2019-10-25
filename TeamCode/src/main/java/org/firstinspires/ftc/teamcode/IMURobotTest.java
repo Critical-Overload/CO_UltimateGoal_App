@@ -32,6 +32,14 @@ public class IMURobotTest extends LinearOpMode {
         motorBackLeft = hardwareMap.dcMotor.get("BL");
         //Initialize imu
         imu = hardwareMap.get(BNO055IMU.class, "imu");
+        //Reverse requred motors
+        //motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
+        //motorBackRight.setDirection(DcMotor.Direction.REVERSE);
+        //Set zero power behaviors to brake
+        motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         //Create an IMURobot object that we will use to run the robot
         IMURobot robot = new IMURobot(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft, imu, this);
@@ -40,15 +48,23 @@ public class IMURobotTest extends LinearOpMode {
 
         waitForStart(); //wait for the game to start
 
+        telemetry.addData("Current status", "Turning");
+        telemetry.update();
         robot.gyroTurn(90, 0.3); //turn 90 degrees counterclockwise
         sleep(500);
-        robot.gyroTurn(-90, 0.3); //turn 120 degrees clockwise
+        robot.gyroTurn(-90, 0.3); //turn 90 degrees clockwise
         sleep(500); //wait
-        robot.gyroDriveCm(0.3, 30);//go forward with gyro for 5 seconds
+        telemetry.addData("Current status", "driving");
+        telemetry.update();
+        robot.gyroStrafeEncoder(0.5, 45,60);//go forward with gyro for 90 cm
         sleep(500);//wait
-        robot.gyroStrafeCm(0.3, 0, 30);//strafe left for 5 seconds
+        telemetry.addData("Current status", "strafing");
+        telemetry.update();
+        robot.gyroStrafeEncoder(0.5, 135, 60);//strafe right for 90 cm
         sleep(500);//wait
-        robot.gyroStrafeCm(0.3, 135, 30); //strafe right for 5 seconds
+        robot.gyroStrafeEncoder(0.5, 225, 60); //strafe at a degree for 90 cm
+        sleep(500);
+        robot.gyroStrafeEncoder(0.5, 315, 60);
         robot.completeStop();//stop
 
 

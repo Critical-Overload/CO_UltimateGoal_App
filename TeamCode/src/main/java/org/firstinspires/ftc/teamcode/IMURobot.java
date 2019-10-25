@@ -42,6 +42,9 @@ public class IMURobot {
     private LinearOpMode opMode;
     private Telemetry telemetry;
 
+    private final double SECONDS_PER_CM = 0.012345;
+    private final double TICKS_PER_CM =34.225;
+
     /**
      *
      * @param motorFrontRight The front right motor
@@ -111,6 +114,17 @@ public class IMURobot {
 
         telemetry.addData("IMU", "ready");
         telemetry.update();
+    }
+
+    public void resetEncoders() {
+        motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     /**
@@ -313,7 +327,11 @@ public class IMURobot {
     }
 
     public void gyroDriveCm(double power, double cm) throws InterruptedException{
-        gyroDriveSec(power, cm/(52*power));
+        gyroDriveSec(power, (cm*SECONDS_PER_CM)/power);
+    }
+
+    public void gyroDriveEncoder(double power, double cm) throws InterruptedException{
+        gyroStrafeEncoder(power, 0, cm);
     }
 
     /**
@@ -352,7 +370,33 @@ public class IMURobot {
     }
 
     public void gyroStrafeCm(double power, double angle, double cm) throws InterruptedException{
-        gyroStrafeSec(power, angle, cm/52);
+        gyroStrafeSec(power, angle, (cm*SECONDS_PER_CM)/power);
+    }
+
+    public void gyroStrafeEncoder(double power, double angle, double cm) throws InterruptedException{
+        double ticks = cm * TICKS_PER_CM;
+
+        //convert direction (degrees) into radians
+        double newDirection = angle * Math.PI/180 + Math.PI/4;
+        //calculate powers needed using direction
+        double leftPower = Math.cos(newDirection) * power;
+        double rightPower = Math.sin(newDirection) * power;
+
+        resetEncoders();
+        resetAngle();
+        setNewGain(0.01);
+        while(Math.abs(motorFrontLeft.getCurrentPosition()) < ticks && opMode.opModeIsActive()){
+            telemetry.addData("Target ticks", ticks);
+            telemetry.addData("Current ticks", Math.abs(motorFrontLeft.getCurrentPosition()));
+            telemetry.update();
+
+            double correction = getCorrection();
+            correctedTankStrafe(leftPower, rightPower, correction);
+        }
+        completeStop();
+        Thread.sleep(500);
+        resetAngle();
+        resetEncoders();
     }
 
     /**
