@@ -4,13 +4,15 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@TeleOp(name = "MecanumTrigOp")
-public class MecanumTrigOp extends LinearOpMode {
+@TeleOp(name = "MainTeleOp")
+public class MainTeleOp extends LinearOpMode {
 
     private DcMotor motorFrontRight;
     private DcMotor motorFrontLeft;
     private DcMotor motorBackLeft;
     private DcMotor motorBackRight;
+    private DcMotor leftIntake;
+    private DcMotor rightIntake;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -19,9 +21,12 @@ public class MecanumTrigOp extends LinearOpMode {
         motorFrontLeft = hardwareMap.dcMotor.get("FL");
         motorBackLeft = hardwareMap.dcMotor.get("BL");
         motorBackRight = hardwareMap.dcMotor.get("BR");
+        leftIntake = hardwareMap.dcMotor.get("LI");
+        rightIntake = hardwareMap.dcMotor.get("RI");
 
         motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
         motorBackRight.setDirection(DcMotor.Direction.REVERSE);
+        rightIntake.setDirection(DcMotor.Direction.REVERSE);
 
         motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -30,6 +35,7 @@ public class MecanumTrigOp extends LinearOpMode {
 
 
         double powerMod = 1.0;
+        double intakeMod = 1.0;
 
         waitForStart();
 
@@ -43,12 +49,15 @@ public class MecanumTrigOp extends LinearOpMode {
             }else{
                 powerMod = 1.0;
             }
+
             if(gamepad1.left_bumper){
-                motorFrontLeft.setPower(5);
-                motorFrontRight.setPower(-.5);
-                motorBackLeft.setPower(.5);
-                motorBackRight.setPower(-.5);
+                intakeMod = -1.0;
+            }else{
+                intakeMod = 1.0;
             }
+
+            leftIntake.setPower(gamepad1.right_trigger * intakeMod);
+            rightIntake.setPower(gamepad1.right_trigger * intakeMod);
 
             double angle = Math.atan2(gamepad1.right_stick_y, gamepad1.right_stick_x) - (Math.PI/4);
             double r = Math.hypot(gamepad1.right_stick_x, gamepad1.right_stick_y);
