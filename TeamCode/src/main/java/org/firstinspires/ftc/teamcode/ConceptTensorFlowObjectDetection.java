@@ -29,12 +29,9 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
@@ -46,7 +43,7 @@ import java.util.List;
 
 /**
  * This 2019-2020 OpMode illustrates the basics of using the TensorFlow Object Detection API to
- * determine the position of the Skystone game elements.  test
+ * determine the position of the Skystone game elements.
  *
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list.
@@ -54,18 +51,11 @@ import java.util.List;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-@TeleOp(name = "SkyStone Object Detection Test")
-public class ConceptTensorFlowObjectDetectionSkyStone extends LinearOpMode {
+@TeleOp(name = "Concept: TensorFlow Object Detection", group = "Concept")
+public class ConceptTensorFlowObjectDetection extends LinearOpMode {
     private static final String TFOD_MODEL_ASSET = "Skystone.tflite";
     private static final String LABEL_FIRST_ELEMENT = "Stone";
     private static final String LABEL_SECOND_ELEMENT = "Skystone";
-
-    private DcMotor motorFrontRight;
-    private DcMotor motorFrontLeft;
-    private DcMotor motorBackRight;
-    private DcMotor motorBackLeft;
-
-    private BNO055IMU imu;
 
     /*
      * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
@@ -79,8 +69,8 @@ public class ConceptTensorFlowObjectDetectionSkyStone extends LinearOpMode {
      * Once you've obtained a license key, copy the string from the Vuforia web site
      * and paste it in to your code on the next line, between the double quotes.
      */
-    private static final String VUFORIA_KEY = "AeXjUy3/////AAABmbHLSgwTzU5tnItQeMYIKBuJtzLC3Yjgadn90RIg4wpjZJxXPoAwCZmsm+bAMXon60mNlk3UZvSNQaabvijg0UZ+9vB/U+d8CeHrLU4FziM5JseM/zIMAdJoePSg1sli9hlC1LYIPMd6uCYwuS8QZvkhHkBisttfhafsExbOSeIP/a3sBqDAxQ7rm1SIvWxdGAgu2iUrLVMx6affe6GAtcFMRhIVWLj+m6XyRnswbtS/Sh4hNZXoBTJn4py4rhZ4iouKw6SvZvYCokuqxObpBxG8Ni0pLcbtctO5+8xtb47Y4uwkkI9t7L4IUfntsQzaMcd6eMtoPcYIhLKhiydVa8iG8u9aqJCExcdS7BSKZpTf";
-
+    private static final String VUFORIA_KEY =
+            "AeXjUy3/////AAABmbHLSgwTzU5tnItQeMYIKBuJtzLC3Yjgadn90RIg4wpjZJxXPoAwCZmsm+bAMXon60mNlk3UZvSNQaabvijg0UZ+9vB/U+d8CeHrLU4FziM5JseM/zIMAdJoePSg1sli9hlC1LYIPMd6uCYwuS8QZvkhHkBisttfhafsExbOSeIP/a3sBqDAxQ7rm1SIvWxdGAgu2iUrLVMx6affe6GAtcFMRhIVWLj+m6XyRnswbtS/Sh4hNZXoBTJn4py4rhZ4iouKw6SvZvYCokuqxObpBxG8Ni0pLcbtctO5+8xtb47Y4uwkkI9t7L4IUfntsQzaMcd6eMtoPcYIhLKhiydVa8iG8u9aqJCExcdS7BSKZpTf";
 
     /**
      * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
@@ -95,25 +85,10 @@ public class ConceptTensorFlowObjectDetectionSkyStone extends LinearOpMode {
     private TFObjectDetector tfod;
 
     @Override
-    public void runOpMode() throws InterruptedException{
+    public void runOpMode() {
         // The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that
         // first.
         initVuforia();
-
-        motorFrontRight = hardwareMap.dcMotor.get("FR");
-        motorFrontLeft = hardwareMap.dcMotor.get("FL");
-        motorBackRight = hardwareMap.dcMotor.get("BR");
-        motorBackLeft = hardwareMap.dcMotor.get("BL");
-        //Initialize imu
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        //Reverse requred motors
-        //motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
-        //motorBackRight.setDirection(DcMotor.Direction.REVERSE);
-        //Set zero power behaviors to brake
-        motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         if (ClassFactory.getInstance().canCreateTFObjectDetector()) {
             initTfod();
@@ -128,11 +103,6 @@ public class ConceptTensorFlowObjectDetectionSkyStone extends LinearOpMode {
         if (tfod != null) {
             tfod.activate();
         }
-
-        IMURobot robot = new IMURobot(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft, imu, this);
-
-        robot.setupRobot();//calibrate IMU, set any required parameters
-
 
         /** Wait for the game to begin */
         telemetry.addData(">", "Press Play to start op mode");
@@ -150,58 +120,16 @@ public class ConceptTensorFlowObjectDetectionSkyStone extends LinearOpMode {
 
                       // step through the list of recognitions and display boundary info.
                       int i = 0;
-                      String skystonePos;
                       for (Recognition recognition : updatedRecognitions) {
                         telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
                         telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
                                           recognition.getLeft(), recognition.getTop());
                         telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
                                 recognition.getRight(), recognition.getBottom());
-                        double skyStonePosRaw = recognition.getLeft();
-                        if(recognition.getLabel() == "Skystone" && updatedRecognitions.size() == 3){
-                            if(skyStonePosRaw > 600){
-                                skystonePos = "Right";
-
-                            }else if(skyStonePosRaw < 200){
-                                skystonePos = "Left";
-                            }else{
-                                skystonePos = "Center";
-                            }
-                            if (skystonePos == "Left"){
-                                robot.resetAngle();
-
-                                //convert direction (degrees) into radians
-                                double newDirection = 90 * Math.PI/180 + Math.PI/4;
-                                //calculate powers needed using direction
-                                double leftPower = Math.cos(newDirection) * 0.5;
-                                double rightPower = Math.sin(newDirection) * 0.5;
-
-                                //create an ElapsedTime object to track the time the robot moves
-                                ElapsedTime timer = new ElapsedTime();
-                                //restart time tracking
-                                timer.reset();
-
-                                //strafe using gyro to keep robot facing straight for
-                                while(skystonePos != "Center"){
-                                    //Get a correction
-                                    double correction = robot.getCorrection();
-                                    //Use the correction to adjust robot power so robot faces straight
-                                    robot.correctedTankStrafe(leftPower, rightPower, correction);
-                                }
-                                robot.completeStop();
-                                //Wait .5 seconds to ensure robot is stopped before continuing
-                                Thread.sleep(500);
-                                robot.resetAngle();
-                            }
-                            telemetry.addData("Skystone Pos", skystonePos);
-                        }
-
                       }
-
                       telemetry.update();
                     }
                 }
-
             }
         }
 

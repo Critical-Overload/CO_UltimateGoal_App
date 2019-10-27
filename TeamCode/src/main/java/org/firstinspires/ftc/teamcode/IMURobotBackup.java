@@ -20,7 +20,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-public class IMURobot {
+public class IMURobotBackup {
 
     //Declare motors that will be used
     private DcMotor motorFrontRight;
@@ -57,8 +57,8 @@ public class IMURobot {
      * @param opMode The Op Mode using the IMURobot object;
      *               for access to the methods opModeIsActive, the exception InterruptedException, and telemetry
      */
-    public IMURobot(DcMotor motorFrontRight, DcMotor motorFrontLeft, DcMotor motorBackRight, DcMotor motorBackLeft,
-                     BNO055IMU imu, LinearOpMode opMode){
+    public IMURobotBackup(DcMotor motorFrontRight, DcMotor motorFrontLeft, DcMotor motorBackRight, DcMotor motorBackLeft,
+                          BNO055IMU imu, LinearOpMode opMode){
         this.motorFrontRight = motorFrontRight;
         this.motorFrontLeft = motorFrontLeft;
         this.motorBackRight = motorBackRight;
@@ -97,9 +97,7 @@ public class IMURobot {
      * Set directions and zero power behaviors for applicable motors, calibrate the IMU
      * @throws InterruptedException if robot is stopped while IMU is still calibrating
      */
-    public void setupRobot() throws InterruptedException{
-        motorBackLeft.setDirection(DcMotor.Direction.REVERSE);
-        motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
+    public void setupBackupRobot() throws InterruptedException{
 
         motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -132,7 +130,7 @@ public class IMURobot {
     /**
      * Reset the angle measurement
      */
-    public void resetAngle() {
+    private void resetAngle() {
         lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         startAngles = lastAngles;
         globalAngle = 0;
@@ -251,7 +249,7 @@ public class IMURobot {
      * If not, get a power correction using a preset gain.
      * @return correction, positive = correct clockwise, negative = correct counterclockwise
      */
-    public double getCorrection(){
+    private double getCorrection(){
         //Get the current angle of the robot
         double angle = getAngle();
         double correction;
@@ -266,7 +264,7 @@ public class IMURobot {
             //multiplied by gain; the gain is the sensitivity to angle
             //We have determined that .1 is a good gain; higher gains result in overcorrection
             //Lower gains are ineffective
-            correction = -angle*gain;
+            correction = angle*gain;
         }
         //Display correction
         telemetry.addData("Correction", correction);
@@ -329,7 +327,9 @@ public class IMURobot {
     }
 
     public void gyroDriveCm(double power, double cm) throws InterruptedException{
-        gyroDriveSec(power, (cm*SECONDS_PER_CM)/power);
+        double s = 0;
+        s = Math.abs((cm*SECONDS_PER_CM)/power);
+        gyroDriveSec(power,s);
     }
 
     public void gyroDriveEncoder(double power, double cm) throws InterruptedException{
@@ -399,6 +399,31 @@ public class IMURobot {
         Thread.sleep(500);
         resetAngle();
         resetEncoders();
+    }
+
+    public void gyroStrafeCont(double power, double angle, double seconds) throws InterruptedException{
+        //restart angle tracking
+        resetAngle();
+
+        //convert direction (degrees) into radians
+        double newDirection = angle * Math.PI/180 + Math.PI/4;
+        //calculate powers needed using direction
+        double leftPower = Math.cos(newDirection) * power;
+        double rightPower = Math.sin(newDirection) * power;
+
+        //create an ElapsedTime object to track the time the robot moves
+        //restart time tracking
+        //strafe using gyro to keep robot facing straight for
+        while(opMode.opModeIsActive()){
+            //Get a correction
+            double correction = getCorrection();
+            //Use the correction to adjust robot power so robot faces straight
+            correctedTankStrafe(leftPower, rightPower, correction);
+        }
+        completeStop();
+        //Wait .5 seconds to ensure robot is stopped before continuing
+        Thread.sleep(500);
+        resetAngle();
     }
 
     /**

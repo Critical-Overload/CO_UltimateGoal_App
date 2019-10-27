@@ -6,15 +6,14 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import org.firstinspires.ftc.teamcode.IMURobot;
-
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name = "IMURobotTest")
-public class IMURobotTest extends LinearOpMode {
+@Autonomous(name = "IMUBackupRobotTest")
+public class IMUBackupRobotTest extends LinearOpMode {
     //Declare motors
     private DcMotor motorFrontRight;
     private DcMotor motorFrontLeft;
@@ -42,11 +41,17 @@ public class IMURobotTest extends LinearOpMode {
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         //Create an IMURobot object that we will use to run the robot
-        IMURobot robot = new IMURobot(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft, imu, this);
-        robot.setupRobot();//calibrate IMU, set any required parameters
 
+        IMURobotBackup backupRobot = new IMURobotBackup(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft, imu, this);
+        backupRobot.setupBackupRobot();
         waitForStart(); //wait for the game to start
 
+        double x = 0;
+        double y = 0;
+        while (x != 1){
+            backupRobot.gyroStrafeCm(1,-90,50);
+
+        }
 
 /*
         robot.gyroStrafeCont(.25, 180);
