@@ -33,7 +33,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-@TeleOp
+@TeleOp (name = "InternalCameraTestCV")
 public class OpenCVInternalCameraExample extends LinearOpMode
 {
     OpenCvCamera phoneCam;
@@ -78,7 +78,7 @@ public class OpenCVInternalCameraExample extends LinearOpMode
          * For a rear facing camera or a webcam, rotation is defined assuming the camera is facing
          * away from the user.
          */
-        phoneCam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+        phoneCam.startStreaming(320, 240, OpenCvCameraRotation.SIDEWAYS_LEFT);
 
         /*
          * Wait for the user to press start on the Driver Station
