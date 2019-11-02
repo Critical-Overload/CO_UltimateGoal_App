@@ -15,11 +15,12 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.List;
 
-@Autonomous(name = "IMUSkyStoneSideAutonomous")
-public class IMUSkyStoneSideAutonomous extends LinearOpMode {
+@Autonomous(name = "AutoSkystoneSide")
+public class AutoSkystoneSide extends LinearOpMode {
     //Declare motors
     private DcMotor motorFrontRight;
     private DcMotor motorFrontLeft;
@@ -54,8 +55,6 @@ public class IMUSkyStoneSideAutonomous extends LinearOpMode {
 
         robot.setupRobot();//calibrate IMU, set any required parameters
 
-        waitForStart(); //wait for the game to start
-
         initVuforia();
 
         if (ClassFactory.getInstance().canCreateTFObjectDetector()) {
@@ -76,11 +75,51 @@ public class IMUSkyStoneSideAutonomous extends LinearOpMode {
         telemetry.addData("Status", "Ready");
         telemetry.update();
 
-        robot.gyroDriveCm(1,1);
-        robot.gyroStrafeCm(1,0,10);
-        robot.gyroDriveCm(1,5);
+        int leftCount = 0, centerCount = 0, rightCount = 0;
+        double newPosition;
 
-        robot.completeStop();//stop
+        ElapsedTime timer = new ElapsedTime();
+        timer.reset();
+
+        //Take as many samples as possible in 3 seconds to reduce error
+        while(timer.seconds() < 3 && opModeIsActive()){
+            newPosition = getSkystonePos();
+            if(newPosition < 300){
+                leftCount++;
+            }else if(newPosition < 600){
+                centerCount++;
+            }else if(newPosition < 1000){
+                rightCount++;
+            }
+        }
+
+        String skystoneConfig;
+        //Set the skystone configuration to most commonly sampled configuration
+        if(leftCount >= Math.max(centerCount, rightCount)){
+            skystoneConfig = "left";
+        }else if(centerCount >= Math.max(leftCount, rightCount)){
+            skystoneConfig = "center";
+        }else{
+            skystoneConfig = "right";
+        }
+
+        telemetry.addData("Skystone", skystoneConfig);
+        telemetry.addData("Left count", leftCount);
+        telemetry.addData("Center count", centerCount);
+        telemetry.addData("Right count", rightCount);
+        telemetry.update();
+
+
+        waitForStart(); //wait for the game to start
+
+        if(skystoneConfig == "left"){
+
+        }else if(skystoneConfig == "center"){
+
+        }else{
+
+        }
+        robot.completeStop();
     }
 
 
@@ -109,7 +148,7 @@ public class IMUSkyStoneSideAutonomous extends LinearOpMode {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minimumConfidence = 0.8;
+        tfodParameters.minimumConfidence = 0.5;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
     }

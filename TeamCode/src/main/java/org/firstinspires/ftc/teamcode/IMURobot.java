@@ -337,9 +337,33 @@ public class IMURobot {
     }
 
     /**
+     * Strafe indefinite amount of time in any direction
+     * @param power
+     * @param angle Direction to strafe (0 = forward, 180 = backward)
+     * @throws InterruptedException if robot is stopped
+     */
+    public void gyroStrafe(double power, double angle) throws InterruptedException{
+        //restart angle tracking
+        resetAngle();
+
+        //convert direction (degrees) into radians
+        double newDirection = angle * Math.PI/180 + Math.PI/4;
+        //calculate powers needed using direction
+        double leftPower = Math.cos(newDirection) * power;
+        double rightPower = Math.sin(newDirection) * power;
+
+        while(opMode.opModeIsActive()){
+            //Get a correction
+            double correction = getCorrection();
+            //Use the correction to adjust robot power so robot faces straight
+            correctedTankStrafe(leftPower, rightPower, correction);
+        }
+    }
+
+    /**
      * Strafe in any direction using gyro to keep robot facing straight forward
      * @param power power
-     * @param angle direction to strafe, in degrees (0 = right, 180 = left)
+     * @param angle direction to strafe, in degrees (0 = forward, 180 = backward)
      * @param seconds time to run
      * @throws InterruptedException if the robot is stopped
      */
@@ -375,6 +399,13 @@ public class IMURobot {
         gyroStrafeSec(power, angle, (cm*SECONDS_PER_CM)/power);
     }
 
+    /**
+     * Strafe in any direction using encoders.
+     * @param power
+     * @param angle Direction to strafe (0 = forward, 180 = backward)
+     * @param cm
+     * @throws InterruptedException if robot is stopped
+     */
     public void gyroStrafeEncoder(double power, double angle, double cm) throws InterruptedException{
         double ticks = cm * TICKS_PER_CM;
 
