@@ -21,21 +21,19 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import android.renderscript.ScriptGroup;
-
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.opencv.core.MatOfPoint2f;
-import org.opencv.core.CvType;
 import org.opencv.core.Core;
-import org.opencv.core.Size;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
+import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -44,11 +42,10 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 
-@TeleOp (name = "CVDetectionTest")
-public class CVDetectionTest extends LinearOpMode
+@TeleOp (name = "CVDetectionTestIMU")
+public class CVDetectionTestIMU extends LinearOpMode
 {
     double hue;
     OpenCvCamera phoneCam;
@@ -57,9 +54,18 @@ public class CVDetectionTest extends LinearOpMode
     double sensitivity;
     String side = "";
 
+    private DcMotor motorFrontRight;
+    private DcMotor motorFrontLeft;
+    private DcMotor motorBackRight;
+    private DcMotor motorBackLeft;
+
+    //Declare imu
+    private BNO055IMU imu;
+
+
 
     @Override
-    public void runOpMode()
+    public void runOpMode() throws InterruptedException
     {
         /*
          * Instantiate an OpenCvCamera object for the camera we'll be using.
@@ -102,10 +108,29 @@ public class CVDetectionTest extends LinearOpMode
          */
         phoneCam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
 
-
         /*
          * Wait for the user to press start on the Driver Station
          */
+
+        motorFrontRight = hardwareMap.dcMotor.get("FR");
+        motorFrontLeft = hardwareMap.dcMotor.get("FL");
+        motorBackRight = hardwareMap.dcMotor.get("BR");
+        motorBackLeft = hardwareMap.dcMotor.get("BL");
+        //Initialize imu
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        //Reverse requred motors
+        //motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
+        //motorBackRight.setDirection(DcMotor.Direction.REVERSE);
+        //Set zero power behaviors to brake
+        motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        //Create an IMURobot object that we will use to run the robot
+        IMURobot robot = new IMURobot(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft, imu, this);
+        robot.setupRobot();//calibrate IMU, set any required parameters
+
         waitForStart();
 
         while (opModeIsActive())
@@ -129,6 +154,8 @@ public class CVDetectionTest extends LinearOpMode
             }
             telemetry.addData("Side to Move:",side );
 
+            telemetry.addData("Height of Input", mainPipeline.inputHeight);
+            telemetry.addData("Width of Input", mainPipeline.inputWidth);
             telemetry.addData("Frame Count", phoneCam.getFrameCount());
             telemetry.addData("FPS", String.format("%.2f", phoneCam.getFps()));
             telemetry.addData("Total frame time ms", phoneCam.getTotalFrameTimeMs());
@@ -158,22 +185,33 @@ public class CVDetectionTest extends LinearOpMode
     class MainPipeline extends OpenCvPipeline
     {
         List<MatOfPoint> bcontours = new ArrayList<>();
+        List<MatOfPoint> scontours = new ArrayList<>();
 
         int bcenterx;
         int bcentery;
+        int scenterx;
+        int scentery;
+        double inputHeight;
+        double inputWidth;
         Mat hsvImage = new Mat();
         Mat buildplate = new Mat();
-
+        Mat skystone = new Mat();
+        Mat skystonew = new Mat();
+        Mat skystoney = new Mat();
         Mat blurImg = new Mat();
+        Mat cannyOutput = new Mat();
 
         @Override
-        public Mat processFrame(Mat input){
+        public Mat processFrame(Mat input) {
             bcontours.clear();
+            scontours.clear();
+
+            Imgproc.Canny(input, cannyOutput, threshold, threshold * 2);
 
             //yellow = 60
             //Blue = 240
             //red = 0 or 360
-            hue = 60;
+            hue = 240;
             sensitivity = 10;
 
 
@@ -187,6 +225,7 @@ public class CVDetectionTest extends LinearOpMode
 
 
             Imgproc.findContours(buildplate, bcontours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+
 
             if (bcontours.size()>0)
             {
@@ -216,8 +255,10 @@ public class CVDetectionTest extends LinearOpMode
                 Imgproc.rectangle(input, new Point(320, 240), new Point(320,240), new Scalar(0,0,0),5,8,0); //Sideways
                 Imgproc.rectangle(input, new Point(240, 320), new Point(240,320), new Scalar(255,255,255),5,8,0); //Upright
                 Imgproc.line(input, new Point(230,640),new Point(230,0),new Scalar(0,0,0),3,8,0); //Upright
-                Imgproc.line(input, new Point(250,640),new Point(250,0),new Scalar(0,0,0),3,8,0); //Upright
+                Imgproc.line(input, new Point(250,640),new Point(250,0),new Scalar(0,0,0),3,8,0);
 
+                inputHeight = input.size().height;
+                inputWidth = input.size().width;
 
 
                 MatOfPoint2f approxCurve = new MatOfPoint2f();
