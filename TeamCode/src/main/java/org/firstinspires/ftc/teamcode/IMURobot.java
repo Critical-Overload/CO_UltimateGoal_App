@@ -12,6 +12,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -23,13 +24,19 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 public class IMURobot {
 
     //Declare motors that will be used
-    private DcMotor motorFrontRight;
-    private DcMotor motorFrontLeft;
-    private DcMotor motorBackRight;
-    private DcMotor motorBackLeft;
+    public DcMotor motorFrontRight;
+    public DcMotor motorFrontLeft;
+    public DcMotor motorBackRight;
+    public DcMotor motorBackLeft;
+
+    private DcMotor leftIntake;
+    private DcMotor rightIntake;
+
+    //Declare servos
+    private Servo leftIntakeServo;
+    private Servo rightIntakeServo;
 
     //Declare the IMU
-
     private BNO055IMU imu;
 
     //Orientations are the sets of angles in the three planes
@@ -49,6 +56,34 @@ public class IMURobot {
 
     /**
      *
+     * @param motorFrontRight
+     * @param motorFrontLeft
+     * @param motorBackRight
+     * @param motorBackLeft
+     * @param imu
+     * @param leftIntake
+     * @param rightIntake
+     * @param opMode The Op Mode using the IMURobot object;
+     *                for access to the methods opModeIsActive, the exception InterruptedException, and telemetry
+     */
+    public IMURobot(DcMotor motorFrontRight, DcMotor motorFrontLeft, DcMotor motorBackRight, DcMotor motorBackLeft,
+                     BNO055IMU imu, DcMotor leftIntake, DcMotor rightIntake, Servo leftIntakeServo,
+                    Servo rightIntakeServo, LinearOpMode opMode){
+        this.motorFrontRight = motorFrontRight;
+        this.motorFrontLeft = motorFrontLeft;
+        this.motorBackRight = motorBackRight;
+        this.motorBackLeft = motorBackLeft;
+        this.imu = imu;
+        this.leftIntake = leftIntake;
+        this.rightIntake = rightIntake;
+        this.leftIntakeServo = leftIntakeServo;
+        this.rightIntakeServo = rightIntakeServo;
+        this.opMode = opMode;
+        this.telemetry = opMode.telemetry;
+    }
+
+    /**
+     *
      * @param motorFrontRight The front right motor
      * @param motorFrontLeft The front left motor
      * @param motorBackRight The back right motor
@@ -58,7 +93,7 @@ public class IMURobot {
      *               for access to the methods opModeIsActive, the exception InterruptedException, and telemetry
      */
     public IMURobot(DcMotor motorFrontRight, DcMotor motorFrontLeft, DcMotor motorBackRight, DcMotor motorBackLeft,
-                     BNO055IMU imu, LinearOpMode opMode){
+                    BNO055IMU imu, LinearOpMode opMode){
         this.motorFrontRight = motorFrontRight;
         this.motorFrontLeft = motorFrontLeft;
         this.motorBackRight = motorBackRight;
@@ -98,8 +133,11 @@ public class IMURobot {
      * @throws InterruptedException if robot is stopped while IMU is still calibrating
      */
     public void setupRobot() throws InterruptedException{
-        motorBackLeft.setDirection(DcMotor.Direction.REVERSE);
+        motorBackRight.setDirection(DcMotor.Direction.REVERSE);
         motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
+
+
+        rightIntake.setDirection(DcMotor.Direction.REVERSE);
 
         motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -118,6 +156,9 @@ public class IMURobot {
         telemetry.update();
     }
 
+    /**
+     * Reset all motor encoders
+     */
     public void resetEncoders() {
         motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -269,8 +310,7 @@ public class IMURobot {
             correction = -angle*gain;
         }
         //Display correction
-        telemetry.addData("Correction", correction);
-        telemetry.update();
+        //telemetry.addData("Correction", correction);
 
         return correction;
     }
@@ -332,6 +372,12 @@ public class IMURobot {
         gyroDriveSec(power, (cm*SECONDS_PER_CM)/power);
     }
 
+    /**
+     * Drives forward using encoders and gyro (uses gyroStrafe)
+     * @param power
+     * @param cm centimeters
+     * @throws InterruptedException if robot is stopped
+     */
     public void gyroDriveEncoder(double power, double cm) throws InterruptedException{
         gyroStrafeEncoder(power, 0, cm);
     }
@@ -434,9 +480,48 @@ public class IMURobot {
 
     /**
      * Change the gain
-     * @param newGain gain (sensitivity): 0 to 1 (anything over
+     * Good gains should be determined experimentally
+     * @param newGain gain (sensitivity): 0 to 0.5 (anything over ~0.5 will cause extreme oscillations in movement)
      */
     public void setNewGain(double newGain){
         gain = newGain;
+    }
+
+    /**
+     * Get encoder position of the front left motor
+     * Can be used in encoder tracking
+     * @return Current position of front left motor, in ticks
+     */
+    public int getMotorPosition() {
+        return Math.abs(motorFrontLeft.getCurrentPosition());
+    }
+
+    /**
+     * Turn on intake
+     */
+    public void intakeOn() {
+        leftIntake.setPower(1);
+        rightIntake.setPower(1);
+    }
+
+    /**
+     * Turn off intake
+     */
+    public void intakeOff() {
+        leftIntake.setPower(0);
+        rightIntake.setPower(0);
+    }
+
+    /**
+     * Reverse intake direction
+     */
+    public void intakeReverse() {
+        leftIntake.setPower(-1);
+        rightIntake.setPower(-1);
+    }
+
+    public void releaseIntake() {
+        leftIntakeServo.setPosition(0);
+        rightIntakeServo.setPosition(0);
     }
 }

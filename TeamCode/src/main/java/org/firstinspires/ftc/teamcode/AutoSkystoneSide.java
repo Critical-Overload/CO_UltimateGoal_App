@@ -15,6 +15,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.List;
@@ -26,6 +27,14 @@ public class AutoSkystoneSide extends LinearOpMode {
     private DcMotor motorFrontLeft;
     private DcMotor motorBackRight;
     private DcMotor motorBackLeft;
+
+    private DcMotor leftIntake;
+    private DcMotor rightIntake;
+
+    private DcMotor arm;
+
+    private Servo leftIntakeServo;
+    private Servo rightIntakeServo;
 
     private static final String TFOD_MODEL_ASSET = "Skystone.tflite";
     private static final String LABEL_FIRST_ELEMENT = "Stone";
@@ -49,12 +58,24 @@ public class AutoSkystoneSide extends LinearOpMode {
         motorBackLeft = hardwareMap.dcMotor.get("BL");
         //Initialize imu
         imu = hardwareMap.get(BNO055IMU.class, "imu");
+        //Initialize intake
+        leftIntake = hardwareMap.dcMotor.get("LI");
+        rightIntake = hardwareMap.dcMotor.get("RI");
+        //Initialize servos
+        leftIntakeServo = hardwareMap.servo.get("LIservo");
+        rightIntakeServo = hardwareMap.servo.get("RIservo");
+        //Initialize arm
+        arm = hardwareMap.dcMotor.get("arm");
+
+        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //Create an IMURobot object that we will use to run the robot
-        IMURobot robot = new IMURobot(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft, imu, this);
+        IMURobot robot = new IMURobot(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft, imu,
+                leftIntake, rightIntake, leftIntakeServo, rightIntakeServo, this);
 
         robot.setupRobot();//calibrate IMU, set any required parameters
-
+        robot.resetEncoders();//reset motor encoders
         initVuforia();
 
         if (ClassFactory.getInstance().canCreateTFObjectDetector()) {
@@ -75,50 +96,74 @@ public class AutoSkystoneSide extends LinearOpMode {
         telemetry.addData("Status", "Ready");
         telemetry.update();
 
-        int leftCount = 0, centerCount = 0, rightCount = 0;
-        double newPosition;
+        waitForStart(); //wait for the game to start
+
+        telemetry.addData("Hello?", "afafaf");
+        telemetry.update();
+
+        robot.gyroDriveEncoder(0.5, 45);
+        robot.resetEncoders();
 
         ElapsedTime timer = new ElapsedTime();
         timer.reset();
 
-        //Take as many samples as possible in 3 seconds to reduce error
-        while(timer.seconds() < 3 && opModeIsActive()){
-            newPosition = getSkystonePos();
-            if(newPosition < 300){
-                leftCount++;
-            }else if(newPosition < 600){
-                centerCount++;
-            }else if(newPosition < 1000){
-                rightCount++;
-            }
-        }
-
-        String skystoneConfig;
-        //Set the skystone configuration to most commonly sampled configuration
-        if(leftCount >= Math.max(centerCount, rightCount)){
-            skystoneConfig = "left";
-        }else if(centerCount >= Math.max(leftCount, rightCount)){
-            skystoneConfig = "center";
-        }else{
-            skystoneConfig = "right";
-        }
-
-        telemetry.addData("Skystone", skystoneConfig);
-        telemetry.addData("Left count", leftCount);
-        telemetry.addData("Center count", centerCount);
-        telemetry.addData("Right count", rightCount);
+        telemetry.addData("Status", "Moving");
         telemetry.update();
 
+        telemetry.addData("Status", "Hello");
+        telemetry.update();
+        while(opModeIsActive() && timer.seconds() < 100){
+            double correction = robot.getCorrection();
 
-        waitForStart(); //wait for the game to start
+            robot.motorBackLeft.setPower(0.1 - correction);
+            robot.motorBackRight.setPower(-0.1 + correction);
+            robot.motorFrontLeft.setPower(0.1 + correction);
+            robot.motorFrontRight.setPower(-0.1 - correction);
 
-        if(skystoneConfig == "left"){
-
-        }else if(skystoneConfig == "center"){
-
-        }else{
-
+            telemetry.addData("Current ticks", robot.getMotorPosition());
+            telemetry.addData("Skystone pos", getSkystonePos());
+            telemetry.update();
+            if(getSkystonePos() > 200){
+                break;
+            }
         }
+        robot.completeStop();
+
+        //1 = left; 2 = center; 3 = right;
+        int skystoneConfig = robot.getMotorPosition() < 680 ? 1 : robot.getMotorPosition() < 1360 ? 2 : 3;
+        telemetry.addData("Config", skystoneConfig);
+        telemetry.update();
+
+        switch (skystoneConfig) {
+            case 1:
+                robot.gyroTurn(180, 0.3);
+                //robot.intakeOn();
+                robot.gyroDriveEncoder(-0.1, 30);
+                sleep(250);
+                robot.gyroDriveEncoder(-0.5, 30);
+                robot.gyroStrafeEncoder(0.5, -90, 120);
+                break;
+            case 2:
+                robot.gyroTurn(180, 0.3);
+                //robot.intakeOn();
+                robot.gyroDriveEncoder(-0.1, 30);
+                sleep(250);
+                robot.gyroDriveEncoder(0.5, 30);
+                robot.gyroStrafeEncoder(0.5, -90, 140);
+                break;
+            case 3:
+                robot.gyroTurn(180, 0.3);
+                //robot.intakeOn();
+                robot.gyroDriveEncoder(-0.1, 30);
+                sleep(250);
+                robot.gyroDriveEncoder(0.5, 30);
+                robot.gyroStrafeEncoder(0.5, -90, 160);
+                break;
+            default:
+                robot.gyroDriveEncoder(-0.5, 120);
+                break;
+        }
+
         robot.completeStop();
     }
 
@@ -177,12 +222,19 @@ public class AutoSkystoneSide extends LinearOpMode {
                         skystonePos = recognition.getLeft();
                     }
                 }
-                telemetry.update();
+                //telemetry.update();
             }
             return skystonePos;
         }else{
             return 1001;
         }
+    }
+
+    public void raiseArm() {
+        while(arm.getCurrentPosition() < 500){
+            arm.setPower(1);
+        }
+        arm.setPower(0);
     }
 
 }
