@@ -52,10 +52,11 @@ import java.util.List;
 import java.util.Random;
 
 
-@Autonomous(name = "BuildplateDetectionTest")
-public class BuildplateDetectionTest extends LinearOpMode
+@Autonomous(name = "SkystoneAndFoundationDetection")
+public class SkystoneAndFoundationDetection extends LinearOpMode
 {
     double hue;
+    double huetwo;
     OpenCvCamera phoneCam;
     MainPipeline mainPipeline;
     double threshold = 150;
@@ -64,7 +65,6 @@ public class BuildplateDetectionTest extends LinearOpMode
     double sideM;
     double sideS;
     double thing;
-    double huetwo;
 
     private DcMotor motorFrontRight;
     private DcMotor motorFrontLeft;
@@ -78,8 +78,6 @@ public class BuildplateDetectionTest extends LinearOpMode
     //Declare imu
     private BNO055IMU imu;
 
-
-
     @Override
     public void runOpMode() throws InterruptedException
     {
@@ -91,8 +89,6 @@ public class BuildplateDetectionTest extends LinearOpMode
         rightIntake = hardwareMap.dcMotor.get("RI");
         leftIntakeServo = hardwareMap.servo.get("LIservo");
         rightIntakeServo = hardwareMap.servo.get("RIservo");
-
-
 
         //Initialize imu
         imu = hardwareMap.get(BNO055IMU.class, "imu");
@@ -122,58 +118,36 @@ public class BuildplateDetectionTest extends LinearOpMode
         // OR...  Do Not Activate the Camera Monitor View
         //phoneCam = new OpenCvInternalCamera(OpenCvInternalCamera.CameraDirection.BACK);
 
-        /*
-         * Open the connection to the camera device
-         */
         phoneCam.openCameraDevice();
 
-        /*
-         * Specify the image processing pipeline we wish to invoke upon receipt
-         * of a frame from the camera. Note that switching pipelines on-the-fly
-         * (while a streaming session is in flight) *IS* supported.
-         */
         mainPipeline = new MainPipeline();
 
         phoneCam.setPipeline(mainPipeline);
 
-        /*
-         * Tell the camera to start streaming images to us! Note that you must make sure
-         * the resolution you specify is supported by the camera. If it is not, an exception
-         * will be thrown.
-         *
-         * Also, we specify the rotation that the camera is used in. This is so that the image
-         * from the camera sensor can be rotated such that it is always displayed with the image upright.
-         * For a front facing camera, rotation is defined assuming the user is looking at the screen.
-         * For a rear facing camera or a webcam, rotation is defined assuming the camera is facing
-         * away from the user.
-         */
         phoneCam.startStreaming(640, 480, OpenCvCameraRotation.SIDEWAYS_LEFT);
 
-        /*
-         * Wait for the user to press start on the Driver Station
-         */
+
         waitForStart();
-            /*
-             * Send some stats to the telemetry
-             */
 
-            telemetry.addData("Center Point", mainPipeline.bcenterx + "," + mainPipeline.bcentery);
-            //Input Upright Mid Point: 240,320
-            //Input Sideways Mid Point: 320,240
-            double inputCenterX = 320;
-            double accuracy = 10;
-            if (mainPipeline.bcenterx > inputCenterX + accuracy){
-                side = "Right";
-                sideM = 1;
-            }else if (mainPipeline.bcenterx < inputCenterX - accuracy){
-                side = "Left";
-                sideM = -1;
-            }
-            else{
-                side = "In the Center";
-                sideM = 0;
+        telemetry.addData("Center Point", mainPipeline.bcenterx + "," + mainPipeline.bcentery);
+        //Input Upright Mid Point: 240,320
+        //Input Sideways Mid Point: 320,240
+        double inputCenterX = 320;
+        double accuracy = 10;
+        thing = 1;
 
-            }
+        if (mainPipeline.bcenterx > inputCenterX + accuracy){
+            side = "Right";
+            sideM = 1;
+        }else if (mainPipeline.bcenterx < inputCenterX - accuracy){
+            side = "Left";
+            sideM = -1;
+        }
+        else{
+            side = "In the Center";
+            sideM = 0;
+
+        }
         if (mainPipeline.scenterx > inputCenterX + accuracy){
             side = "Right";
             sideS = 1;
@@ -186,24 +160,10 @@ public class BuildplateDetectionTest extends LinearOpMode
             sideS = 0;
 
         }
-            telemetry.addData("Side to Move:",side );
+        // 0 = foundation
+        // 1 = skystone
 
-            telemetry.addData("Height of Input", mainPipeline.inputHeight);
-            telemetry.addData("Width of Input", mainPipeline.inputWidth);
-            telemetry.addData("Frame Count", phoneCam.getFrameCount());
-            telemetry.addData("FPS", String.format("%.2f", phoneCam.getFps()));
-            telemetry.addData("Total frame time ms", phoneCam.getTotalFrameTimeMs());
-            telemetry.addData("Pipeline time ms", phoneCam.getPipelineTimeMs());
-            telemetry.addData("Overhead time ms", phoneCam.getOverheadTimeMs());
-            telemetry.addData("Theoretical max FPS", phoneCam.getCurrentPipelineMaxFps());
-
-            telemetry.update();
-
-
-            thing = 1;
-            // 0 = foundation
-            // 1 = skystone
-            while (thing == 0 && sideM != 0){
+        while (thing == 0 && sideM != 0){
             //restart angle tracking
             robot.resetAngle();
 
@@ -215,23 +175,25 @@ public class BuildplateDetectionTest extends LinearOpMode
             double correction = robot.getCorrection();
             robot.correctedTankStrafe(leftPower, rightPower, correction);
 
-             //Input Upright Mid Point: 240,320
-                //Input Sideways Mid Point: 320,240
-                if (mainPipeline.bcenterx > inputCenterX + accuracy){
-                    side = "Right";
-                    sideM = 1;
-                }else if (mainPipeline.bcenterx < inputCenterX - accuracy){
-                    side = "Left";
-                    sideM = -1;
-                }
-                else{
-                    side = "In the Center";
-                    sideM = 0;
+            //Input Upright Mid Point: 240,320
+            //Input Sideways Mid Point: 320,240
+            if (mainPipeline.bcenterx > inputCenterX + accuracy){
+                side = "Right";
+                sideM = 1;
+            }else if (mainPipeline.bcenterx < inputCenterX - accuracy){
+                side = "Left";
+                sideM = -1;
+            }
+            else{
+                side = "In the Center";
+                sideM = 0;
 
-                }
+            }
             telemetry.update();
 
         }
+
+        robot.gyroDriveEncoder(0.3,50);
 
         while (thing == 1 && sideS != 0){
             //restart angle tracking
@@ -262,26 +224,18 @@ public class BuildplateDetectionTest extends LinearOpMode
             telemetry.update();
 
         }
-            robot.completeStop();
+        robot.completeStop();
 
+        robot.gyroTurn(180,0.3);
+        leftIntakeServo.setPosition(0);
+        rightIntakeServo.setPosition(1);
+        robot.intakeOn();
+        robot.gyroDriveEncoder(.3,50);
+        robot.gyroTurn(90,-0.3);
+        robot.gyroDriveEncoder(.3,4);
 
     }
 
-    /*
-     * An example image processing pipeline to be run upon receipt of each frame from the camera.
-     * Note that the processFrame() method is called serially from the frame worker thread -
-     * that is, a new camera frame will not come in while you're still processing a previous one.
-     * In other words, the processFrame() method will never be called multiple times simultaneously.
-     *
-     * However, the rendering of your processed image to the viewport is done in parallel to the
-     * frame worker thread. That is, the amount of time it takes to render the image to the
-     * viewport does NOT impact the amount of frames per second that your pipeline can process.
-     *
-     * IMPORTANT NOTE: this pipeline is NOT invoked on your OpMode thread. It is invoked on the
-     * frame worker thread. This should not be a problem in the vast majority of cases. However,
-     * if you're doing something weird where you do need it synchronized with your OpMode thread,
-     * then you will need to account for that accordingly.
-     */
     class MainPipeline extends OpenCvPipeline
     {
         List<MatOfPoint> bcontours = new ArrayList<>();
@@ -297,13 +251,11 @@ public class BuildplateDetectionTest extends LinearOpMode
         double inputWidth;
         Mat hsvImage = new Mat();
         Mat buildplate = new Mat();
-        Mat skystone = new Mat();
         Mat blurImg = new Mat();
         Mat cannyOutput = new Mat();
         Mat output = new Mat();
         Mat yellow = new Mat();
         Scalar myColor = new Scalar(0,255,255);
-        Mat test = new Mat();
         Mat grey = new Mat();
         Mat greyImg = new Mat();
 
@@ -312,8 +264,8 @@ public class BuildplateDetectionTest extends LinearOpMode
             input.copyTo(output);
             Mat mask = new Mat(input.rows(), input.cols(), CvType.CV_8U, Scalar.all(0));
             Mat cropped = new Mat(input.size(),input.type(),myColor);
-
             ycontours.clear();
+
             bcontours.clear();
             scontours.clear();
 
@@ -323,8 +275,9 @@ public class BuildplateDetectionTest extends LinearOpMode
             //Blue = 240
             //red = 0 or 360
             hue = 240;
-            huetwo = 50;
             sensitivity = 10;
+            huetwo = 52;
+
 
             Imgproc.GaussianBlur(input, blurImg, new Size(5, 5), 0);
 
@@ -332,14 +285,15 @@ public class BuildplateDetectionTest extends LinearOpMode
             Imgproc.cvtColor(blurImg, hsvImage, Imgproc.COLOR_RGB2HSV);
 
             Core.inRange(hsvImage, new Scalar((hue / 2) - sensitivity, 100, 50), new Scalar((hue / 2) + sensitivity, 255, 255), buildplate);
-            //Core.inRange(hsvImage, new Scalar((60 / 2) - sensitivity, 100, 50), new Scalar((60 / 2) + sensitivity, 255, 255), skystoney);
 
-            Core.inRange(hsvImage, new Scalar((huetwo / 2) - sensitivity, 100, 50), new Scalar((huetwo / 2) + sensitivity, 255, 255), yellow);
+
+            Imgproc.findContours(buildplate, bcontours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+
+            Core.inRange(hsvImage, new Scalar((hue / 2) - sensitivity, 100, 50), new Scalar((hue / 2) + sensitivity, 255, 255), yellow);
 
             Imgproc.findContours(yellow, ycontours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 
             if (ycontours.size() > 0){
-
                 MatOfPoint2f approxCurve = new MatOfPoint2f();
 
                 for (int i = 0; i < ycontours.size(); i++) {
@@ -368,9 +322,9 @@ public class BuildplateDetectionTest extends LinearOpMode
                     }
 
                     Rect ylargestRect = Imgproc.boundingRect(ycontours.get(bmaxValIdx));
-                    Imgproc.line(input, new Point(0,ylargestRect.y), new Point(480, ylargestRect.y), new Scalar(100,100,100),3,8,0);
-                    Imgproc.line(input, new Point(0,ylargestRect.y + ylargestRect.height), new Point(480, ylargestRect.y + ylargestRect.height), new Scalar(100,100,100),3,8,0);
-                    Imgproc.rectangle(mask,new Point(0,ylargestRect.y), new Point(480, ylargestRect.y + ylargestRect.height), new Scalar(255,255,255),-1,8,0);
+                    Imgproc.line(input, new Point(0,ylargestRect.y), new Point(640, ylargestRect.y), new Scalar(100,100,100),3,8,0);
+                    Imgproc.line(input, new Point(0,ylargestRect.y + ylargestRect.height), new Point(640, ylargestRect.y + ylargestRect.height), new Scalar(100,100,100),3,8,0);
+                    Imgproc.rectangle(mask,new Point(0,ylargestRect.y), new Point(640, ylargestRect.y + ylargestRect.height), new Scalar(0,255,255),-1,8,0);
                     input.copyTo(cropped,mask);
                     cropped.copyTo(input);
 
@@ -383,9 +337,7 @@ public class BuildplateDetectionTest extends LinearOpMode
             }
 
 
-            Imgproc.findContours(buildplate, bcontours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
-
-            if (bcontours.size()>0 && scontours.size() == 0)
+            if (bcontours.size()>0)
             {
                 Imgproc.drawContours(output, bcontours, -1, new Scalar(0, 0, 255), 2);
 
@@ -444,7 +396,7 @@ public class BuildplateDetectionTest extends LinearOpMode
 
 
             }
-            if(scontours.size()>0 && bcontours.size() == 0)
+            if(scontours.size()>0)
             {
                 Imgproc.drawContours(output, scontours, -1, new Scalar(0, 0, 255), 2);
 

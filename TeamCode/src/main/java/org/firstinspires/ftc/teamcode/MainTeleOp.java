@@ -72,7 +72,7 @@ public class MainTeleOp extends LinearOpMode {
 
             if(gamepad2.a){
                 leftIntakeServo.setPosition(0);
-                rightIntakeServo.setPosition(0);  //kevins left kidney
+                rightIntakeServo.setPosition(0);
             }
 
             arm.setPower(gamepad2.right_stick_y);
