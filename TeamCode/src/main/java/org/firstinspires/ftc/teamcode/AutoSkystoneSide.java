@@ -101,63 +101,128 @@ public class AutoSkystoneSide extends LinearOpMode {
         telemetry.addData("Hello?", "afafaf");
         telemetry.update();
 
-        robot.gyroDriveEncoder(0.5, 45);
-        robot.resetEncoders();
+        robot.gyroDriveEncoder(0.5, 30);
+        robot.gyroStrafeEncoder(0.5, 90, 50);
+        sleep(500);
 
+        int leftCount = 0, centerCount = 0, rightCount = 0;
         ElapsedTime timer = new ElapsedTime();
         timer.reset();
 
-        telemetry.addData("Status", "Moving");
+        while(timer.seconds() < 2){
+            double newPos = getSkystonePos();
+            telemetry.addData("Skystone Pos", newPos);
+            telemetry.update();
+            if(newPos < 300){
+                leftCount++;
+            }else if(newPos < 500){
+                centerCount++;
+            }else{
+                rightCount++;
+            }
+        }
+
+        //ElapsedTime timer = new ElapsedTime();
+        //timer.reset();
+
+        /*telemetry.addData("Status", "Moving");
         telemetry.update();
 
         telemetry.addData("Status", "Hello");
-        telemetry.update();
-        while(opModeIsActive() && timer.seconds() < 100){
-            double correction = robot.getCorrection();
+        telemetry.update();*/
 
-            robot.motorBackLeft.setPower(0.1 - correction);
-            robot.motorBackRight.setPower(-0.1 + correction);
-            robot.motorFrontLeft.setPower(0.1 + correction);
-            robot.motorFrontRight.setPower(-0.1 - correction);
+        /*robot.gyroStrafeEncoder(0.3, 90, 15);
+        while(opModeIsActive() && timer.seconds() < 100){
+
+            robot.gyroStrafe(0.1, 90);
 
             telemetry.addData("Current ticks", robot.getMotorPosition());
             telemetry.addData("Skystone pos", getSkystonePos());
             telemetry.update();
             if(getSkystonePos() > 200){
+                telemetry.addData("Status", "breaking from loop");
+                telemetry.update();
+                sleep(1000);
                 break;
             }
-        }
-        robot.completeStop();
+        }*/
+        /*robot.completeStop();
+        telemetry.addData("Hello", "hello??");
+        telemetry.update();
+        sleep(1000);*/
 
         //1 = left; 2 = center; 3 = right;
-        int skystoneConfig = robot.getMotorPosition() < 680 ? 1 : robot.getMotorPosition() < 1360 ? 2 : 3;
+        int skystoneConfig;
+        if(leftCount > Math.max(centerCount, rightCount)){
+            skystoneConfig = 1;
+        }else if(centerCount > Math.max(leftCount, rightCount)){
+            skystoneConfig = 2;
+        }else{
+            skystoneConfig = 3;
+        }
         telemetry.addData("Config", skystoneConfig);
         telemetry.update();
 
         switch (skystoneConfig) {
             case 1:
-                robot.gyroTurn(180, 0.3);
-                //robot.intakeOn();
+                /*robot.gyroTurn(180, 0.3);
+                robot.releaseIntake();
+                sleep(500);
+                robot.intakeOn();
                 robot.gyroDriveEncoder(-0.1, 30);
                 sleep(250);
-                robot.gyroDriveEncoder(-0.5, 30);
-                robot.gyroStrafeEncoder(0.5, -90, 120);
+                robot.gyroDriveEncoder(0.5, 30);
+                robot.gyroStrafeEncoder(0.5, 90, 120);
+                robot.intakeReverse();
+                robot.gyroDriveEncoder(0.1, 30);*/
+                robot.gyroStrafeEncoder(0.5, -90, 15);
+                robot.gyroTurn(175, 0.3);
+                robot.releaseIntake();
+                sleep(1000);
+                robot.intakeOn();
+                robot.gyroDriveEncoder(-0.1, 50);
+                sleep(250);
+                robot.gyroDriveEncoder(0.5, 50);
+                robot.gyroStrafeEncoder(0.5, 90, 110);
+                robot.intakeReverse();
+                robot.gyroDriveEncoder(0.1, 30);
                 break;
             case 2:
-                robot.gyroTurn(180, 0.3);
+                /*robot.gyroTurn(180, 0.3);
                 //robot.intakeOn();
                 robot.gyroDriveEncoder(-0.1, 30);
                 sleep(250);
                 robot.gyroDriveEncoder(0.5, 30);
-                robot.gyroStrafeEncoder(0.5, -90, 140);
+                robot.gyroStrafeEncoder(0.5, -90, 140);*/
+                robot.gyroTurn(175, 0.3);
+                robot.releaseIntake();
+                sleep(1000);
+                robot.intakeOn();
+                robot.gyroDriveEncoder(-0.1, 60);
+                sleep(250);
+                robot.gyroDriveEncoder(0.5, 60);
+                robot.gyroStrafeEncoder(0.5, 90, 130);
+                robot.intakeReverse();
+                robot.gyroDriveEncoder(0.1, 30);
                 break;
             case 3:
-                robot.gyroTurn(180, 0.3);
+                /*robot.gyroTurn(180, 0.3);
                 //robot.intakeOn();
                 robot.gyroDriveEncoder(-0.1, 30);
                 sleep(250);
                 robot.gyroDriveEncoder(0.5, 30);
-                robot.gyroStrafeEncoder(0.5, -90, 160);
+                robot.gyroStrafeEncoder(0.5, -90, 160);*/
+                robot.gyroStrafeEncoder(0.5, 90, 15);
+                robot.gyroTurn(175, 0.3);
+                robot.releaseIntake();
+                sleep(1000);
+                robot.intakeOn();
+                robot.gyroDriveEncoder(-0.1, 50);
+                sleep(250);
+                robot.gyroDriveEncoder(0.5, 50);
+                robot.gyroStrafeEncoder(0.5, 90, 150);
+                robot.intakeReverse();
+                robot.gyroDriveEncoder(0.1, 30);
                 break;
             default:
                 robot.gyroDriveEncoder(-0.5, 120);
@@ -226,7 +291,7 @@ public class AutoSkystoneSide extends LinearOpMode {
             }
             return skystonePos;
         }else{
-            return 1001;
+            return -1;
         }
     }
 

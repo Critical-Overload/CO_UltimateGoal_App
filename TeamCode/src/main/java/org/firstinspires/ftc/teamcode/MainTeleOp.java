@@ -35,7 +35,7 @@ public class MainTeleOp extends LinearOpMode {
         rightIntakeServo = hardwareMap.servo.get("RIservo");
         claw = hardwareMap.servo.get("claw");
 
-        motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
+        motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
         motorBackRight.setDirection(DcMotor.Direction.REVERSE);
         rightIntake.setDirection(DcMotor.Direction.REVERSE);
 
@@ -71,8 +71,8 @@ public class MainTeleOp extends LinearOpMode {
             }
 
             if(gamepad2.a){
-                leftIntakeServo.setPosition(0);
-                rightIntakeServo.setPosition(0);  //kevins left kidney
+                leftIntakeServo.setPosition(1);
+                rightIntakeServo.setPosition(0);
             }
 
             arm.setPower(gamepad2.right_stick_y);
@@ -93,10 +93,10 @@ public class MainTeleOp extends LinearOpMode {
             double powerOne = r*Math.sin(angle);
             double powerTwo = r*Math.cos(angle);
 
-            motorFrontLeft.setPower((powerOne + (rotation))*powerMod);
-            motorFrontRight.setPower((powerTwo - (rotation))*powerMod);
-            motorBackLeft.setPower((powerTwo + (rotation))*powerMod);
-            motorBackRight.setPower((powerOne - (rotation))*powerMod);
+            motorFrontLeft.setPower((powerOne - (rotation))*powerMod);
+            motorFrontRight.setPower((powerTwo + (rotation))*powerMod);
+            motorBackLeft.setPower((powerTwo - (rotation))*powerMod);
+            motorBackRight.setPower((powerOne + (rotation))*powerMod);
 
             telemetry.addData("FL Power", motorFrontLeft.getPower());
             telemetry.addData("BL Power", motorBackLeft.getPower());

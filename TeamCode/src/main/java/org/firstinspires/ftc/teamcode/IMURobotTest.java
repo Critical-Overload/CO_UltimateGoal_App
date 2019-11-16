@@ -58,7 +58,7 @@ public class IMURobotTest extends LinearOpMode {
 
  */
 
-        /*
+
         telemetry.addData("Current status", "Turning");
         telemetry.update();
         robot.gyroTurn(90, 0.3); //turn 90 degrees counterclockwise
@@ -67,17 +67,20 @@ public class IMURobotTest extends LinearOpMode {
         sleep(500); //wait
         telemetry.addData("Current status", "driving");
         telemetry.update();
-        robot.gyroStrafeEncoder(0.5, 45,60);//go forward with gyro for 90 cm
+        robot.gyroDriveEncoder(0.5, 60);
+        robot.gyroStrafeEncoder(0.5, 90,60);//go forward with gyro for 90 cm
+        robot.gyroStrafeEncoder(0.5, -90, 60);
         sleep(500);//wait
         telemetry.addData("Current status", "strafing");
         telemetry.update();
+        /*
         robot.gyroStrafeEncoder(0.5, 135, 60);//strafe right for 90 cm
         sleep(500);//wait
         robot.gyroStrafeEncoder(0.5, 225, 60); //strafe at a degree for 90 cm
         sleep(500);
         robot.gyroStrafeEncoder(0.5, 315, 60);
-        robot.completeStop();//stop
-         */
+        robot.completeStop();//stop*/
+
 
 
     }

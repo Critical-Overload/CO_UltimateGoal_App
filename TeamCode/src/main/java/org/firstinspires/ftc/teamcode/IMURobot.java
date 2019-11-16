@@ -398,12 +398,12 @@ public class IMURobot {
         double leftPower = Math.cos(newDirection) * power;
         double rightPower = Math.sin(newDirection) * power;
 
-        while(opMode.opModeIsActive()){
-            //Get a correction
-            double correction = getCorrection();
-            //Use the correction to adjust robot power so robot faces straight
-            correctedTankStrafe(leftPower, rightPower, correction);
-        }
+        //while(opMode.opModeIsActive()){
+        //Get a correction
+        double correction = getCorrection();
+        //Use the correction to adjust robot power so robot faces straight
+        correctedTankStrafe(leftPower, rightPower, correction);
+        //}
     }
 
     /**
@@ -521,7 +521,7 @@ public class IMURobot {
     }
 
     public void releaseIntake() {
-        leftIntakeServo.setPosition(0);
+        leftIntakeServo.setPosition(1);
         rightIntakeServo.setPosition(0);
     }
 }
