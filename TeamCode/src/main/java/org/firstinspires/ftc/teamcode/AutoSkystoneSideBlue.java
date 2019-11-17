@@ -5,12 +5,6 @@
  */
 package org.firstinspires.ftc.teamcode;
 
-import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
-import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
-import org.firstinspires.ftc.teamcode.IMURobot;
-
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -18,10 +12,15 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+
 import java.util.List;
 
-@Autonomous(name = "AutoSkystoneSide")
-public class AutoSkystoneSide extends LinearOpMode {
+@Autonomous(name = "AutoSkystoneSideBlue")
+public class AutoSkystoneSideBlue extends LinearOpMode {
     //Declare motors
     private DcMotor motorFrontRight;
     private DcMotor motorFrontLeft;
@@ -102,7 +101,7 @@ public class AutoSkystoneSide extends LinearOpMode {
         telemetry.update();
 
         robot.gyroDriveEncoder(0.5, 30);
-        robot.gyroStrafeEncoder(0.5, 90, 50);
+        robot.gyroStrafeEncoder(0.5, -90, 50);
         sleep(500);
 
         int leftCount = 0, centerCount = 0, rightCount = 0;
@@ -113,11 +112,11 @@ public class AutoSkystoneSide extends LinearOpMode {
             double newPos = getSkystonePos();
             telemetry.addData("Skystone Pos", newPos);
             telemetry.update();
-            if(newPos < 300){
+            if((newPos > 900 && newPos < 1500) || (newPos > -10) && (newPos < 200)){
                 leftCount++;
-            }else if(newPos < 500){
+            }else if(newPos > 200 && newPos < 500){
                 centerCount++;
-            }else{
+            }else if (newPos > 500 && newPos < 900){
                 rightCount++;
             }
         }
@@ -175,17 +174,17 @@ public class AutoSkystoneSide extends LinearOpMode {
                 robot.gyroStrafeEncoder(0.5, 90, 120);
                 robot.intakeReverse();
                 robot.gyroDriveEncoder(0.1, 30);*/
-                robot.gyroStrafeEncoder(0.5, -90, 15);
+                robot.gyroStrafeEncoder(0.5, 90, 15);
                 robot.gyroTurn(175, 0.3);
                 robot.releaseIntake();
-                sleep(1000);
+                sleep(500);
                 robot.intakeOn();
-                robot.gyroDriveEncoder(-0.1, 50);
+                robot.gyroDriveEncoder(-0.1, 40);
                 sleep(250);
-                robot.gyroDriveEncoder(0.5, 50);
-                robot.gyroStrafeEncoder(0.5, 90, 110);
+                robot.gyroDriveEncoder(0.75, 30);
+                robot.gyroStrafeEncoder(0.75, -90, 110);
                 robot.intakeReverse();
-                robot.gyroDriveEncoder(0.1, 30);
+                robot.gyroDriveEncoder(0.25, 30);
                 break;
             case 2:
                 /*robot.gyroTurn(180, 0.3);
@@ -196,14 +195,14 @@ public class AutoSkystoneSide extends LinearOpMode {
                 robot.gyroStrafeEncoder(0.5, -90, 140);*/
                 robot.gyroTurn(175, 0.3);
                 robot.releaseIntake();
-                sleep(1000);
+                sleep(500);
                 robot.intakeOn();
-                robot.gyroDriveEncoder(-0.1, 60);
+                robot.gyroDriveEncoder(-0.1, 40);
                 sleep(250);
-                robot.gyroDriveEncoder(0.5, 60);
-                robot.gyroStrafeEncoder(0.5, 90, 130);
+                robot.gyroDriveEncoder(0.75, 30);
+                robot.gyroStrafeEncoder(0.75, -90, 130);
                 robot.intakeReverse();
-                robot.gyroDriveEncoder(0.1, 30);
+                robot.gyroDriveEncoder(0.25, 30);
                 break;
             case 3:
                 /*robot.gyroTurn(180, 0.3);
@@ -212,17 +211,17 @@ public class AutoSkystoneSide extends LinearOpMode {
                 sleep(250);
                 robot.gyroDriveEncoder(0.5, 30);
                 robot.gyroStrafeEncoder(0.5, -90, 160);*/
-                robot.gyroStrafeEncoder(0.5, 90, 15);
+                robot.gyroStrafeEncoder(0.5, -90, 15);
                 robot.gyroTurn(175, 0.3);
                 robot.releaseIntake();
-                sleep(1000);
+                sleep(500);
                 robot.intakeOn();
-                robot.gyroDriveEncoder(-0.1, 50);
+                robot.gyroDriveEncoder(-0.1, 40);
                 sleep(250);
-                robot.gyroDriveEncoder(0.5, 50);
-                robot.gyroStrafeEncoder(0.5, 90, 150);
+                robot.gyroDriveEncoder(0.75, 30);
+                robot.gyroStrafeEncoder(0.75, -90, 150);
                 robot.intakeReverse();
-                robot.gyroDriveEncoder(0.1, 30);
+                robot.gyroDriveEncoder(0.25, 30);
                 break;
             default:
                 robot.gyroDriveEncoder(-0.5, 120);
@@ -271,7 +270,7 @@ public class AutoSkystoneSide extends LinearOpMode {
             // getUpdatedRecognitions() will return null if no new information is available since
             // the last time that call was made.
             List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-            skystonePos = 1001;
+            skystonePos = 2001;
             if (updatedRecognitions != null) {
                 telemetry.addData("# Object Detected", updatedRecognitions.size());
 
@@ -291,7 +290,7 @@ public class AutoSkystoneSide extends LinearOpMode {
             }
             return skystonePos;
         }else{
-            return -1;
+            return -1000;
         }
     }
 

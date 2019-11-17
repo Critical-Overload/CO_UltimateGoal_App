@@ -83,8 +83,8 @@ public class MainTeleOp extends LinearOpMode {
                 claw.setPosition(0);
             }
 
-            leftIntake.setPower((gamepad1.right_trigger * intakeMod)-(gamepad1.left_trigger * intakeMod));
-            rightIntake.setPower((gamepad1.right_trigger * intakeMod)-(gamepad1.left_trigger * intakeMod));
+            leftIntake.setPower((gamepad2.right_trigger * intakeMod)-(gamepad2.left_trigger * intakeMod));
+            rightIntake.setPower((gamepad2.right_trigger * intakeMod)-(gamepad2.left_trigger * intakeMod));
 
             double angle = Math.atan2(gamepad1.right_stick_y, gamepad1.right_stick_x) - (Math.PI/4);
             double r = Math.hypot(gamepad1.right_stick_x, gamepad1.right_stick_y);
