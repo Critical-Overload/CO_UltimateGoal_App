@@ -21,38 +21,33 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import android.renderscript.ScriptGroup;
-
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.opencv.core.MatOfPoint2f;
-import org.opencv.core.CvType;
 import org.opencv.core.Core;
-import org.opencv.core.Size;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
+import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 import org.openftc.easyopencv.OpenCvPipeline;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 
-@Autonomous(name = "SkystoneAndFoundationDetection")
-public class SkystoneAndFoundationDetection extends LinearOpMode
+@Autonomous(name = "SkystoneAndFoundationDetectionTest")
+public class SkystoneAndFoundationDetectionTest extends LinearOpMode
 {
     double hue;
     double huetwo;
@@ -64,7 +59,6 @@ public class SkystoneAndFoundationDetection extends LinearOpMode
     double sideM;
     double sideS;
     double thing;
-    boolean onoff;
 
     private DcMotor motorFrontRight;
     private DcMotor motorFrontLeft;
@@ -81,29 +75,11 @@ public class SkystoneAndFoundationDetection extends LinearOpMode
     @Override
     public void runOpMode() throws InterruptedException
     {
-        motorFrontRight = hardwareMap.dcMotor.get("FR");
-        motorFrontLeft = hardwareMap.dcMotor.get("FL");
-        motorBackRight = hardwareMap.dcMotor.get("BR");
-        motorBackLeft = hardwareMap.dcMotor.get("BL");
-        leftIntake = hardwareMap.dcMotor.get("LI");
-        rightIntake = hardwareMap.dcMotor.get("RI");
-        leftIntakeServo = hardwareMap.servo.get("LIservo");
-        rightIntakeServo = hardwareMap.servo.get("RIservo");
 
         //Initialize imu
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
         //Reverse requred motors
 
         //Set zero power behaviors to brake
-        motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        //Create an IMURobot object that we will use to run the robot
-        IMURobot robot = new IMURobot(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft, imu, leftIntake, rightIntake, leftIntakeServo, rightIntakeServo, this);
-        robot.setupRobot();//calibrate IMU, set any required parameters
-
         /*
          * Instantiate an OpenCvCamera object for the camera we'll be using.
          * In this sample, we're using the phone's internal camera. We pass it a
@@ -113,7 +89,7 @@ public class SkystoneAndFoundationDetection extends LinearOpMode
          * single-parameter constructor instead (commented out below)
          */
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        phoneCam = new OpenCvInternalCamera(OpenCvInternalCamera.CameraDirection.BACK);
+        phoneCam = new OpenCvInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
 
         // OR...  Do Not Activate the Camera Monitor View
         //phoneCam = new OpenCvInternalCamera(OpenCvInternalCamera.CameraDirection.BACK);
@@ -128,6 +104,7 @@ public class SkystoneAndFoundationDetection extends LinearOpMode
 
 
         waitForStart();
+
 
         telemetry.addData("Center Point", mainPipeline.bcenterx + "," + mainPipeline.bcentery);
         //Input Upright Mid Point: 240,320
@@ -162,100 +139,6 @@ public class SkystoneAndFoundationDetection extends LinearOpMode
         }
         // 0 = foundation
         // 1 = skystone
-        robot.gyroDriveEncoder(0.7,30);
-        robot.gyroStrafeEncoder(0.7,90,20);
-        sleep(1000);
-
-        while (thing == 1 && sideS != 0){
-            robot.resetAngle();
-
-            //convert direction (degrees) into radians
-            double newDirection = (90) * Math.PI/180 + Math.PI/4;
-            //calculate powers needed using direction
-            double leftPower = Math.cos(newDirection) * (0.2);
-            double rightPower = Math.sin(newDirection) * (0.2);
-            double correction = robot.getCorrection();
-            robot.correctedTankStrafe(leftPower, rightPower, correction);
-
-            //restart angle tracking
-
-            //Input Upright Mid Point: 240,320
-            //Input Sideways Mid Point: 320,240
-            if (mainPipeline.scenterx > inputCenterX + accuracy){
-                sleep(1000);
-                side = "Right";
-                sideS = 1;
-                robot.resetAngle();
-
-                //convert direction (degrees) into radians
-                 newDirection = (-90) * Math.PI/180 + Math.PI/4;
-                //calculate powers needed using direction
-                 leftPower = Math.cos(newDirection) * (0.2);
-                 rightPower = Math.sin(newDirection) * (0.2);
-                 correction = robot.getCorrection();
-                robot.correctedTankStrafe(leftPower, rightPower, correction);
-
-            }else if (mainPipeline.scenterx < inputCenterX - accuracy){
-                sleep(1000);
-                side = "Left";
-                sideS = -1;
-                robot.resetAngle();
-
-                //convert direction (degrees) into radians
-                 newDirection = (90) * Math.PI/180 + Math.PI/4;
-                //calculate powers needed using direction
-                 leftPower = Math.cos(newDirection) * (0.2);
-                 rightPower = Math.sin(newDirection) * (0.2);
-                 correction = robot.getCorrection();
-                robot.correctedTankStrafe(leftPower, rightPower, correction);
-
-            }
-            else{
-                side = "In the Center";
-                sideS = 0;
-
-            }
-            telemetry.update();
-
-        }
-        robot.completeStop();
-
-        robot.gyroTurn(170,0.7);
-        leftIntakeServo.setPosition(1);
-        rightIntakeServo.setPosition(0);
-        robot.intakeOn();
-        sleep(2000);
-        robot.gyroDriveEncoder(-0.3,50);
-        robot.gyroDriveEncoder(0.7,60);
-        robot.gyroTurn(80, 0.5);
-        robot.gyroDriveEncoder(.7,50);
-        thing = 1;
-        while (thing == 0 && sideM != 0){
-            //restart angle tracking
-            robot.resetAngle();
-            //Input Upright Mid Point: 240,320
-            //Input Sideways Mid Point: 320,240
-            if (mainPipeline.bcenterx > inputCenterX + accuracy){
-                side = "Right";
-                sideM = 1;
-                robot.turnClockwise(0.7);
-            }else if (mainPipeline.bcenterx < inputCenterX - accuracy){
-                side = "Left";
-                sideM = -1;
-                robot.turnCounterClockwise(0.7);
-            }
-            else{
-                side = "In the Center";
-                sideM = 0;
-            }
-            robot.gyroDriveEncoder(-0.5,10);
-            robot.completeStop();
-            robot.gyroTurn(180,0.7);
-            robot.intakeReverse();
-            robot.gyroDriveEncoder(0.7,10);
-            telemetry.update();
-
-        }
 
     }
 
@@ -297,8 +180,8 @@ public class SkystoneAndFoundationDetection extends LinearOpMode
             //yellow = 60
             //Blue = 240
             //red = 0 or 360
-            hue = 360;
-            sensitivity = 20;
+            hue = 240;
+            sensitivity = 10;
             huetwo = 50;
 
 
@@ -319,46 +202,44 @@ public class SkystoneAndFoundationDetection extends LinearOpMode
             if (ycontours.size() > 0){
                 MatOfPoint2f approxCurve = new MatOfPoint2f();
 
-                    for (int i = 0; i < ycontours.size(); i++) {
-                        //Convert contours(i) from MatOfPoint to MatOfPoint2f
-                        MatOfPoint2f contour2f = new MatOfPoint2f(ycontours.get(i).toArray());
-                        //Processing on mMOP2f1 which is in type MatOfPoint2f
-                        double approxDistance = Imgproc.arcLength(contour2f, true) * 0.02;
-                        Imgproc.approxPolyDP(contour2f, approxCurve, approxDistance, true);
+                for (int i = 0; i < ycontours.size(); i++) {
+                    //Convert contours(i) from MatOfPoint to MatOfPoint2f
+                    MatOfPoint2f contour2f = new MatOfPoint2f(ycontours.get(i).toArray());
+                    //Processing on mMOP2f1 which is in type MatOfPoint2f
+                    double approxDistance = Imgproc.arcLength(contour2f, true) * 0.02;
+                    Imgproc.approxPolyDP(contour2f, approxCurve, approxDistance, true);
 
-                        //Convert back to MatOfPoint
-                        MatOfPoint points = new MatOfPoint(approxCurve.toArray());
+                    //Convert back to MatOfPoint
+                    MatOfPoint points = new MatOfPoint(approxCurve.toArray());
 
-                        // Get bounding rect of contour
-                        Rect rect = Imgproc.boundingRect(points);
+                    // Get bounding rect of contour
+                    Rect rect = Imgproc.boundingRect(points);
 
 
-                        // draw enclosing rectangle (all same color, but you could use variable i to make them unique)
-                        double bmaxVal = 0;
-                        int bmaxValIdx = 0;
-                        for (int contourIdx = 0; contourIdx < ycontours.size(); contourIdx++) {
-                            double contourArea = Imgproc.contourArea(ycontours.get(contourIdx));
-                            if (bmaxVal < contourArea) {
-                                bmaxVal = contourArea;
-                                bmaxValIdx = contourIdx;
-                            }
+                    // draw enclosing rectangle (all same color, but you could use variable i to make them unique)
+                    double bmaxVal = 0;
+                    int bmaxValIdx = 0;
+                    for (int contourIdx = 0; contourIdx < ycontours.size(); contourIdx++) {
+                        double contourArea = Imgproc.contourArea(ycontours.get(contourIdx));
+                        if (bmaxVal < contourArea) {
+                            bmaxVal = contourArea;
+                            bmaxValIdx = contourIdx;
                         }
-
-                        Rect ylargestRect = Imgproc.boundingRect(ycontours.get(bmaxValIdx));
-                        Imgproc.rectangle(mask, new Point(0, ylargestRect.y), new Point(640, ylargestRect.y + ylargestRect.height), new Scalar(255, 255, 255), -1, 8, 0);
-                        Imgproc.rectangle(output, new Point(0, ylargestRect.y + 30), new Point(640, ylargestRect.y + ylargestRect.height), new Scalar(255, 0, 0), 1, 8, 0);
-
-                        input.copyTo(cropped, mask);
-                        cropped.copyTo(input);
-
                     }
 
+                    Rect ylargestRect = Imgproc.boundingRect(ycontours.get(bmaxValIdx));
+                    Imgproc.rectangle(mask,new Point(0,ylargestRect.y), new Point(640, ylargestRect.y + ylargestRect.height), new Scalar(255,255,255),-1,8,0);
+                    //Imgproc.rectangle(mask,new Point(0,ylargestRect.y), new Point(480, ylargestRect.y + ylargestRect.height), new Scalar(255,255,255),-1,8,0);
+                    input.copyTo(cropped,mask);
+                    cropped.copyTo(input);
 
+
+
+                }
                 Imgproc.cvtColor(input,grey, Imgproc.COLOR_RGB2GRAY);
                 Imgproc.threshold(grey, greyImg,15,255,Imgproc.THRESH_BINARY_INV);
                 Imgproc.findContours(greyImg, scontours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
             }
-
 
             if (bcontours.size()>0)
             {

@@ -229,6 +229,7 @@ public class AutoSkystoneSideBlue extends LinearOpMode {
         }
 
         robot.completeStop();
+        robot.gyroStrafeEncoder(0.75,90,20);
     }
 
 
