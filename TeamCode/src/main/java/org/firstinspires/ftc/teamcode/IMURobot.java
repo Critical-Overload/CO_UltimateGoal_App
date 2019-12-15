@@ -11,6 +11,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -29,8 +30,8 @@ public class IMURobot {
     public DcMotor motorBackRight;
     public DcMotor motorBackLeft;
 
-    private DcMotor leftIntake;
-    private DcMotor rightIntake;
+    private CRServo leftIntake;
+    private CRServo rightIntake;
 
     //Declare servos
     private Servo leftIntakeServo;
@@ -67,7 +68,7 @@ public class IMURobot {
      *                for access to the methods opModeIsActive, the exception InterruptedException, and telemetry
      */
     public IMURobot(DcMotor motorFrontRight, DcMotor motorFrontLeft, DcMotor motorBackRight, DcMotor motorBackLeft,
-                     BNO055IMU imu, DcMotor leftIntake, DcMotor rightIntake, Servo leftIntakeServo,
+                     BNO055IMU imu, CRServo leftIntake, CRServo rightIntake, Servo leftIntakeServo,
                     Servo rightIntakeServo, LinearOpMode opMode){
         this.motorFrontRight = motorFrontRight;
         this.motorFrontLeft = motorFrontLeft;
@@ -136,8 +137,6 @@ public class IMURobot {
         motorBackRight.setDirection(DcMotor.Direction.REVERSE);
         motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
 
-
-        rightIntake.setDirection(DcMotor.Direction.REVERSE);
 
         motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -323,8 +322,8 @@ public class IMURobot {
     public void tankDrive(double leftPower, double rightPower){
         motorFrontLeft.setPower(leftPower);
         motorFrontRight.setPower(rightPower);
-        motorBackLeft.setPower(leftPower*.5);
-        motorBackRight.setPower(rightPower*.5);
+        motorBackLeft.setPower(leftPower);
+        motorBackRight.setPower(rightPower);
     }
 
     /**
@@ -499,26 +498,37 @@ public class IMURobot {
     /**
      * Turn on intake
      */
+
     public void intakeOn() {
         leftIntake.setPower(1);
         rightIntake.setPower(1);
     }
 
+
+
     /**
      * Turn off intake
      */
+
     public void intakeOff() {
         leftIntake.setPower(0);
         rightIntake.setPower(0);
     }
 
+
+
+
     /**
      * Reverse intake direction
      */
+
     public void intakeReverse() {
         leftIntake.setPower(-1);
         rightIntake.setPower(-1);
     }
+
+
+
 
     public void releaseIntake() {
         leftIntakeServo.setPosition(1);
