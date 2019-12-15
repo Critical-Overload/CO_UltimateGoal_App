@@ -21,39 +21,38 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import android.renderscript.ScriptGroup;
-
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.opencv.core.MatOfPoint2f;
-import org.opencv.core.CvType;
 import org.opencv.core.Core;
-import org.opencv.core.Size;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
+import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 import org.openftc.easyopencv.OpenCvPipeline;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.openftc.easyopencv.OpenCvWebcam;
+
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 
-@TeleOp (name = "CVDetectionTest")
-public class CVDetectionTest extends LinearOpMode
+@TeleOp (name = "CVDetectionWebcamTest")
+public class CVDetectionWebcamTest extends LinearOpMode
 {
     double hue;
     double onoff;
-    OpenCvCamera phoneCam;
-
+    OpenCvCamera webcam;
+    
     MainPipeline mainPipeline;
     double sensitivity;
     String side = "";
@@ -71,7 +70,7 @@ public class CVDetectionTest extends LinearOpMode
          * single-parameter constructor instead (commented out below)
          */
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        phoneCam = new OpenCvInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
+        webcam = new OpenCvWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"));
 
 
         // OR...  Do Not Activate the Camera Monitor View
@@ -80,7 +79,7 @@ public class CVDetectionTest extends LinearOpMode
         /*
          * Open the connection to the camera device
          */
-        phoneCam.openCameraDevice();
+        webcam.openCameraDevice();
 
         /*
          * Specify the image processing pipeline we wish to invoke upon receipt
@@ -89,7 +88,7 @@ public class CVDetectionTest extends LinearOpMode
          */
         mainPipeline = new MainPipeline();
 
-        phoneCam.setPipeline(mainPipeline);
+        webcam.setPipeline(mainPipeline);
 
         /*
          * Tell the camera to start streaming images to us! Note that you must make sure
@@ -102,7 +101,7 @@ public class CVDetectionTest extends LinearOpMode
          * For a rear facing camera or a webcam, rotation is defined assuming the camera is facing
          * away from the user.
          */
-        phoneCam.startStreaming(640, 480, OpenCvCameraRotation.SIDEWAYS_LEFT);
+        webcam.startStreaming(640, 480);
 
 
         /*
@@ -131,12 +130,12 @@ public class CVDetectionTest extends LinearOpMode
             }
             telemetry.addData("Side to Move:",side );
 
-            telemetry.addData("Frame Count", phoneCam.getFrameCount());
-            telemetry.addData("FPS", String.format("%.2f", phoneCam.getFps()));
-            telemetry.addData("Total frame time ms", phoneCam.getTotalFrameTimeMs());
-            telemetry.addData("Pipeline time ms", phoneCam.getPipelineTimeMs());
-            telemetry.addData("Overhead time ms", phoneCam.getOverheadTimeMs());
-            telemetry.addData("Theoretical max FPS", phoneCam.getCurrentPipelineMaxFps());
+            telemetry.addData("Frame Count", webcam.getFrameCount());
+            telemetry.addData("FPS", String.format("%.2f", webcam.getFps()));
+            telemetry.addData("Total frame time ms", webcam.getTotalFrameTimeMs());
+            telemetry.addData("Pipeline time ms", webcam.getPipelineTimeMs());
+            telemetry.addData("Overhead time ms", webcam.getOverheadTimeMs());
+            telemetry.addData("Theoretical max FPS", webcam.getCurrentPipelineMaxFps());
 
             telemetry.update();
         }
