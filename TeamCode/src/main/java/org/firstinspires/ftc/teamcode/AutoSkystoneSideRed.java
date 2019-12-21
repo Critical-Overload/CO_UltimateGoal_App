@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.IMURobot;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -28,8 +29,8 @@ public class AutoSkystoneSideRed extends LinearOpMode {
     private DcMotor motorBackRight;
     private DcMotor motorBackLeft;
 
-    private DcMotor leftIntake;
-    private DcMotor rightIntake;
+    private CRServo leftIntake;
+    private CRServo rightIntake;
 
     private DcMotor arm;
 
@@ -59,8 +60,8 @@ public class AutoSkystoneSideRed extends LinearOpMode {
         //Initialize imu
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         //Initialize intake
-        leftIntake = hardwareMap.dcMotor.get("LI");
-        rightIntake = hardwareMap.dcMotor.get("RI");
+        leftIntake = hardwareMap.crservo.get("LI");
+        rightIntake = hardwareMap.crservo.get("RI");
         //Initialize servos
         leftIntakeServo = hardwareMap.servo.get("LIservo");
         rightIntakeServo = hardwareMap.servo.get("RIservo");

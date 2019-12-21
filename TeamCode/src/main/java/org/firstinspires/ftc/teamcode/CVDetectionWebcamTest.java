@@ -70,7 +70,7 @@ public class CVDetectionWebcamTest extends LinearOpMode
          * single-parameter constructor instead (commented out below)
          */
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webcam = new OpenCvWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"));
+        webcam = new OpenCvWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
 
 
         // OR...  Do Not Activate the Camera Monitor View
@@ -101,7 +101,7 @@ public class CVDetectionWebcamTest extends LinearOpMode
          * For a rear facing camera or a webcam, rotation is defined assuming the camera is facing
          * away from the user.
          */
-        webcam.startStreaming(640, 480);
+        webcam.startStreaming(640, 480,OpenCvCameraRotation.UPRIGHT);
 
 
         /*
@@ -197,60 +197,29 @@ public class CVDetectionWebcamTest extends LinearOpMode
             //converting blured image from BGR to HSV
             Imgproc.cvtColor(blurImg, hsvImage, Imgproc.COLOR_RGB2HSV);
 
-            Core.inRange(hsvImage, new Scalar((hue / 2) - sensitivity, 100, 50), new Scalar((hue / 2) + sensitivity, 255, 255), yellow);
+            Core.inRange(hsvImage, new Scalar((hue / 2) - sensitivity, 70, 50), new Scalar((hue / 2) + sensitivity, 255, 255), yellow);
 
             Imgproc.findContours(yellow, ycontours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 
             if (ycontours.size() > 0){
-                MatOfPoint2f approxCurve = new MatOfPoint2f();
 
-                for (int i = 0; i < ycontours.size(); i++) {
-                    //Convert contours(i) from MatOfPoint to MatOfPoint2f
-                    MatOfPoint2f contour2f = new MatOfPoint2f(ycontours.get(i).toArray());
-                    //Processing on mMOP2f1 which is in type MatOfPoint2f
-                    double approxDistance = Imgproc.arcLength(contour2f, true) * 0.02;
-                    Imgproc.approxPolyDP(contour2f, approxCurve, approxDistance, true);
-
-                    //Convert back to MatOfPoint
-                    MatOfPoint points = new MatOfPoint(approxCurve.toArray());
-
-                    // Get bounding rect of contour
-                    Rect rect = Imgproc.boundingRect(points);
-
-
-                    // draw enclosing rectangle (all same color, but you could use variable i to make them unique)
-                    double bmaxVal = 0;
-                    int bmaxValIdx = 0;
-                    for (int contourIdx = 0; contourIdx < ycontours.size(); contourIdx++) {
-                        double contourArea = Imgproc.contourArea(ycontours.get(contourIdx));
-                        if (bmaxVal < contourArea) {
-                            bmaxVal = contourArea;
-                            bmaxValIdx = contourIdx;
-                        }
-                    }
-
-                    Rect ylargestRect = Imgproc.boundingRect(ycontours.get(bmaxValIdx));
-                    Imgproc.rectangle(mask, new Point(0, ylargestRect.y), new Point(640, ylargestRect.y + ylargestRect.height), new Scalar(255, 255, 255), -1, 8, 0);
-                    Imgproc.rectangle(output, new Point(0, ylargestRect.y + 20), new Point(640, ylargestRect.y + ylargestRect.height), new Scalar(255, 0, 0), 1, 8, 0);
+                    Rect ylargestRect = Imgproc.boundingRect(ycontours.get(0));
+                    Imgproc.rectangle(mask, new Point(0, ylargestRect.y+100), new Point(640, ylargestRect.y + ylargestRect.height), new Scalar(255, 255, 255), -1, 8, 0);
+                    Imgproc.rectangle(output, new Point(0, ylargestRect.y ), new Point(640, ylargestRect.y + ylargestRect.height), new Scalar(255, 0, 0), 1, 8, 0);
 
                     input.copyTo(cropped, mask);
                     cropped.copyTo(input);
 
-                }
+
 
                 Imgproc.cvtColor(input,grey, Imgproc.COLOR_RGB2GRAY);
-                Imgproc.threshold(grey, greyImg,15,255,Imgproc.THRESH_BINARY_INV);
+                Imgproc.threshold(grey, greyImg,10,255,Imgproc.THRESH_BINARY_INV);
                 Imgproc.findContours(greyImg, bcontours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
             }
 
 
             if (bcontours.size() > 0) {
                 MatOfPoint2f approxCurve = new MatOfPoint2f();
-
-                Imgproc.rectangle(output, new Point(320, 240), new Point(320, 240), new Scalar(0, 0, 0), 5, 8, 0); //Sideways
-                Imgproc.rectangle(output, new Point(240, 320), new Point(240, 320), new Scalar(255, 255, 255), 5, 8, 0); //Upright
-                Imgproc.line(output, new Point(310, 640), new Point(310, 0), new Scalar(0, 0, 0), 3, 8, 0); //Upright
-                Imgproc.line(output, new Point(330, 640), new Point(330, 0), new Scalar(0, 0, 0), 3, 8, 0); //Upright
 
                 //For each contour found
 
@@ -267,11 +236,8 @@ public class CVDetectionWebcamTest extends LinearOpMode
                 Imgproc.drawContours(output, bcontours, bmaxValIdx, new Scalar(0, 255, 0), 3);
 
                 Rect blargestRect = Imgproc.boundingRect(bcontours.get(bmaxValIdx));
-                Imgproc.rectangle(output, blargestRect.tl(), blargestRect.br(), new Scalar(0, 255, 0), 1, 8, 0);
-                Imgproc.putText(output, "Buildplate Largest Rectangle", blargestRect.tl(), 2, 0.3, new Scalar(255, 255, 255));
                 bcenterx = (blargestRect.x + blargestRect.x + blargestRect.width) / 2;
                 bcentery = (blargestRect.y + blargestRect.y + blargestRect.height) / 2;
-                Imgproc.rectangle(output, new Point(bcenterx, bcentery), new Point(bcenterx, bcentery), new Scalar(150, 150, 255), 5, 8, 0); //Upright
 
 
             }
