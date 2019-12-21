@@ -20,7 +20,7 @@ public class MainTeleOp extends LinearOpMode {
     private Servo leftIntakeServo;
     private Servo rightIntakeServo;
     private Servo flimsy;
-    private Servo clawMover;
+    private CRServo clawMover;
     private Servo claw;
 
     @Override
@@ -38,7 +38,7 @@ public class MainTeleOp extends LinearOpMode {
         leftIntakeServo = hardwareMap.servo.get("LIservo");
         rightIntakeServo = hardwareMap.servo.get("RIservo");
         flimsy = hardwareMap.servo.get("flimsy");
-        clawMover = hardwareMap.servo.get("clawMover");
+        clawMover = hardwareMap.crservo.get("clawMover");
         claw = hardwareMap.servo.get("claw");
 
         motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
@@ -49,6 +49,7 @@ public class MainTeleOp extends LinearOpMode {
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
         double powerMod = 1.0;
@@ -102,17 +103,8 @@ public class MainTeleOp extends LinearOpMode {
                 claw.setPosition(1);
             }
 
-            arm.setPower(gamepad2.right_stick_y);
-
-            if(gamepad2.dpad_left){
-                clawMover.setPosition(clawMover.getPosition() - 0.01);
-            }
-
-            if(gamepad2.dpad_right){
-                clawMover.setPosition(clawMover.getPosition() + 0.01);
-            }
-
-            telemetry.addData("Claw mover position", clawMover.getPosition());
+            arm.setPower(gamepad2.right_stick_y*0.5);
+            clawMover.setPower(gamepad2.right_stick_y*0.25+gamepad2.left_stick_y*0.25);
 
             if(gamepad1.a){
                 flimsy.setPosition(flimsy.getPosition() + 0.01);
