@@ -20,8 +20,8 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 import java.util.List;
 
-@Autonomous(name = "AutoSkystoneSideBlue")
-public class AutoSkystoneSideBlue extends LinearOpMode {
+@Autonomous(name = "AutoSkystoneSideNew")
+public class AutoSkystoneSideNew extends LinearOpMode {
     //Declare motors
     private DcMotor motorFrontRight;
     private DcMotor motorFrontLeft;
@@ -64,11 +64,6 @@ public class AutoSkystoneSideBlue extends LinearOpMode {
         //Initialize servos
         leftIntakeServo = hardwareMap.servo.get("LIservo");
         rightIntakeServo = hardwareMap.servo.get("RIservo");
-        //Initialize arm
-        arm = hardwareMap.dcMotor.get("arm");
-
-        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //Create an IMURobot object that we will use to run the robot
         IMURobot robot = new IMURobot(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft, imu,
@@ -96,29 +91,27 @@ public class AutoSkystoneSideBlue extends LinearOpMode {
         telemetry.addData("Status", "Ready");
         telemetry.update();
 
-        waitForStart(); //wait for the game to start
-
         telemetry.addData("Hello?", "afafaf");
         telemetry.update();
 
         robot.gyroDriveEncoder(0.5, 30);
-        robot.gyroStrafeEncoder(0.5, -90, 50);
+        robot.gyroStrafeEncoder(0.5, 90, 50);
         sleep(500);
 
         int leftCount = 0, centerCount = 0, rightCount = 0;
         ElapsedTime timer = new ElapsedTime();
         timer.reset();
 
-        while(timer.seconds() < 2){
+        while(timer.seconds() < 3){
             double newPos = getSkystonePos();
             telemetry.addData("Skystone Pos", newPos);
             telemetry.update();
-            if((newPos > 900 && newPos < 1500) || (newPos > -10) && (newPos < 200)){
-                leftCount++;
-            }else if(newPos > 200 && newPos < 500){
-                centerCount++;
-            }else if (newPos > 500 && newPos < 900){
+            if((newPos > 11 && newPos < 300)){
                 rightCount++;
+            }else if(newPos > 300 && newPos < 600){
+                centerCount++;
+            }else if (newPos > 600 && newPos < 1000){
+                leftCount++;
             }
         }
 
@@ -163,55 +156,10 @@ public class AutoSkystoneSideBlue extends LinearOpMode {
         telemetry.addData("Config", skystoneConfig);
         telemetry.update();
 
+        waitForStart(); //wait for the game to start
+/*
         switch (skystoneConfig) {
             case 1:
-                /*robot.gyroTurn(180, 0.3);
-                robot.releaseIntake();
-                sleep(500);
-                robot.intakeOn();
-                robot.gyroDriveEncoder(-0.1, 30);
-                sleep(250);
-                robot.gyroDriveEncoder(0.5, 30);
-                robot.gyroStrafeEncoder(0.5, 90, 120);
-                robot.intakeReverse();
-                robot.gyroDriveEncoder(0.1, 30);*/
-                robot.gyroStrafeEncoder(0.5, 90, 15);
-                robot.gyroTurn(175, 0.3);
-                robot.releaseIntake();
-                sleep(500);
-                robot.intakeOn();
-                robot.gyroDriveEncoder(-0.1, 40);
-                sleep(250);
-                robot.gyroDriveEncoder(0.75, 30);
-                robot.gyroStrafeEncoder(0.75, -90, 110);
-                robot.intakeReverse();
-                robot.gyroDriveEncoder(0.25, 30);
-                break;
-            case 2:
-                /*robot.gyroTurn(180, 0.3);
-                //robot.intakeOn();
-                robot.gyroDriveEncoder(-0.1, 30);
-                sleep(250);
-                robot.gyroDriveEncoder(0.5, 30);
-                robot.gyroStrafeEncoder(0.5, -90, 140);*/
-                robot.gyroTurn(175, 0.3);
-                robot.releaseIntake();
-                sleep(500);
-                robot.intakeOn();
-                robot.gyroDriveEncoder(-0.1, 40);
-                sleep(250);
-                robot.gyroDriveEncoder(0.75, 30);
-                robot.gyroStrafeEncoder(0.75, -90, 130);
-                robot.intakeReverse();
-                robot.gyroDriveEncoder(0.25, 30);
-                break;
-            case 3:
-                /*robot.gyroTurn(180, 0.3);
-                //robot.intakeOn();
-                robot.gyroDriveEncoder(-0.1, 30);
-                sleep(250);
-                robot.gyroDriveEncoder(0.5, 30);
-                robot.gyroStrafeEncoder(0.5, -90, 160);*/
                 robot.gyroStrafeEncoder(0.5, -90, 15);
                 robot.gyroTurn(175, 0.3);
                 robot.releaseIntake();
@@ -220,17 +168,41 @@ public class AutoSkystoneSideBlue extends LinearOpMode {
                 robot.gyroDriveEncoder(-0.1, 40);
                 sleep(250);
                 robot.gyroDriveEncoder(0.75, 30);
-                robot.gyroStrafeEncoder(0.75, -90, 150);
+                robot.gyroStrafeEncoder(0.75, 90, 110);
+                robot.intakeReverse();
+                robot.gyroDriveEncoder(0.25, 30);
+                break;
+            case 2:
+                robot.gyroTurn(175, 0.3);
+                robot.releaseIntake();
+                sleep(500);
+                robot.intakeOn();
+                robot.gyroDriveEncoder(-0.1, 40);
+                sleep(250);
+                robot.gyroDriveEncoder(0.75, 30);
+                robot.gyroStrafeEncoder(0.75, 90, 130);
+                robot.intakeReverse();
+                robot.gyroDriveEncoder(0.25, 30);
+                break;
+            case 3:
+                robot.gyroStrafeEncoder(0.5, 90, 15);
+                robot.gyroTurn(175, 0.3);
+                robot.releaseIntake();
+                sleep(500);
+                robot.intakeOn();
+                robot.gyroDriveEncoder(-0.1, 40);
+                sleep(250);
+                robot.gyroDriveEncoder(0.75, 30);
+                robot.gyroStrafeEncoder(0.75, 90, 150);
                 robot.intakeReverse();
                 robot.gyroDriveEncoder(0.25, 30);
                 break;
             default:
                 robot.gyroDriveEncoder(-0.5, 120);
                 break;
-        }
+        }*/
 
         robot.completeStop();
-        robot.gyroStrafeEncoder(0.75,90,20);
     }
 
 

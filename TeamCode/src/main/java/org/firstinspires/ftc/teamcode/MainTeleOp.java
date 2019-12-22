@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "MainTeleOp")
@@ -23,6 +24,8 @@ public class MainTeleOp extends LinearOpMode {
     private CRServo clawMover;
     private Servo claw;
 
+    private DigitalChannel touch;
+
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -35,8 +38,8 @@ public class MainTeleOp extends LinearOpMode {
         leftIntake = hardwareMap.crservo.get("LI");
         rightIntake = hardwareMap.crservo.get("RI");
 
-        leftIntakeServo = hardwareMap.servo.get("LIservo");
-        rightIntakeServo = hardwareMap.servo.get("RIservo");
+        leftIntakeServo = hardwareMap.servo.get("LIrelease");
+        rightIntakeServo = hardwareMap.servo.get("RIrelease");
         flimsy = hardwareMap.servo.get("flimsy");
         clawMover = hardwareMap.crservo.get("clawMover");
         claw = hardwareMap.servo.get("claw");
@@ -50,6 +53,9 @@ public class MainTeleOp extends LinearOpMode {
         motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
         double powerMod = 1.0;
@@ -104,6 +110,7 @@ public class MainTeleOp extends LinearOpMode {
             }
 
             arm.setPower(gamepad2.right_stick_y*0.5);
+
             clawMover.setPower(gamepad2.right_stick_y*0.25+gamepad2.left_stick_y*0.25);
 
             if(gamepad1.a){
@@ -138,6 +145,7 @@ public class MainTeleOp extends LinearOpMode {
 
             telemetry.update();
             idle();
+
         }
     }
 }

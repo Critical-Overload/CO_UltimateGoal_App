@@ -27,6 +27,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -70,10 +71,11 @@ public class SkystoneAndFoundationDetection extends LinearOpMode
     private DcMotor motorFrontLeft;
     private DcMotor motorBackRight;
     private DcMotor motorBackLeft;
-    private DcMotor leftIntake;
-    private DcMotor rightIntake;
+    private CRServo leftIntake;
+    private CRServo rightIntake;
     private Servo leftIntakeServo;
     private Servo rightIntakeServo;
+    public Servo flimsy;
 
     //Declare imu
     private BNO055IMU imu;
@@ -85,10 +87,11 @@ public class SkystoneAndFoundationDetection extends LinearOpMode
         motorFrontLeft = hardwareMap.dcMotor.get("FL");
         motorBackRight = hardwareMap.dcMotor.get("BR");
         motorBackLeft = hardwareMap.dcMotor.get("BL");
-        leftIntake = hardwareMap.dcMotor.get("LI");
-        rightIntake = hardwareMap.dcMotor.get("RI");
-        leftIntakeServo = hardwareMap.servo.get("LIservo");
-        rightIntakeServo = hardwareMap.servo.get("RIservo");
+        leftIntake = hardwareMap.crservo.get("LI");
+        rightIntake = hardwareMap.crservo.get("RI");
+        leftIntakeServo = hardwareMap.servo.get("LIrelease");
+        rightIntakeServo = hardwareMap.servo.get("RIrelease");
+        flimsy = hardwareMap.servo.get("flimsy");
 
         //Initialize imu
         imu = hardwareMap.get(BNO055IMU.class, "imu");
@@ -101,7 +104,8 @@ public class SkystoneAndFoundationDetection extends LinearOpMode
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         //Create an IMURobot object that we will use to run the robot
-        IMURobot robot = new IMURobot(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft, imu, leftIntake, rightIntake, leftIntakeServo, rightIntakeServo, this);
+        IMURobot robot = new IMURobot(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft, imu,
+                leftIntake, rightIntake, leftIntakeServo, rightIntakeServo, flimsy, this);
         robot.setupRobot();//calibrate IMU, set any required parameters
 
         /*
@@ -219,7 +223,7 @@ public class SkystoneAndFoundationDetection extends LinearOpMode
 
         }
         robot.completeStop();
-
+/*
         robot.gyroTurn(170,0.7);
         leftIntakeServo.setPosition(1);
         rightIntakeServo.setPosition(0);
@@ -255,7 +259,7 @@ public class SkystoneAndFoundationDetection extends LinearOpMode
             robot.gyroDriveEncoder(0.7,10);
             telemetry.update();
 
-        }
+        }*/
 
     }
 

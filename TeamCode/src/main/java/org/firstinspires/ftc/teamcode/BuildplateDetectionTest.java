@@ -27,6 +27,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -70,8 +71,8 @@ public class BuildplateDetectionTest extends LinearOpMode
     private DcMotor motorFrontLeft;
     private DcMotor motorBackRight;
     private DcMotor motorBackLeft;
-    private DcMotor leftIntake;
-    private DcMotor rightIntake;
+    private CRServo leftIntake;
+    private CRServo rightIntake;
     private Servo leftIntakeServo;
     private Servo rightIntakeServo;
 
@@ -87,8 +88,8 @@ public class BuildplateDetectionTest extends LinearOpMode
         motorFrontLeft = hardwareMap.dcMotor.get("FL");
         motorBackRight = hardwareMap.dcMotor.get("BR");
         motorBackLeft = hardwareMap.dcMotor.get("BL");
-        leftIntake = hardwareMap.dcMotor.get("LI");
-        rightIntake = hardwareMap.dcMotor.get("RI");
+        leftIntake = hardwareMap.crservo.get("LI");
+        rightIntake = hardwareMap.crservo.get("RI");
         leftIntakeServo = hardwareMap.servo.get("LIservo");
         rightIntakeServo = hardwareMap.servo.get("RIservo");
 
