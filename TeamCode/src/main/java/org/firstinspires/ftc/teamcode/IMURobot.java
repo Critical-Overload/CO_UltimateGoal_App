@@ -559,11 +559,11 @@ public class IMURobot {
         rightIntake.setPower(-1);
     }
 
-    public void flimsyDown() {
+    public void flimsyUp() {
         flimsy.setPosition(0);
     }
 
-    public void flimsyUp() {
+    public void flimsyDown() {
         flimsy.setPosition(1);
     }
 

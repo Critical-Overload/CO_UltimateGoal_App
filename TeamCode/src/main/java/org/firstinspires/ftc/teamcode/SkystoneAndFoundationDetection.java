@@ -75,7 +75,6 @@ public class SkystoneAndFoundationDetection extends LinearOpMode
     private CRServo rightIntake;
     private Servo leftIntakeServo;
     private Servo rightIntakeServo;
-    public Servo flimsy;
 
     //Declare imu
     private BNO055IMU imu;
@@ -91,7 +90,6 @@ public class SkystoneAndFoundationDetection extends LinearOpMode
         rightIntake = hardwareMap.crservo.get("RI");
         leftIntakeServo = hardwareMap.servo.get("LIrelease");
         rightIntakeServo = hardwareMap.servo.get("RIrelease");
-        flimsy = hardwareMap.servo.get("flimsy");
 
         //Initialize imu
         imu = hardwareMap.get(BNO055IMU.class, "imu");
@@ -104,8 +102,7 @@ public class SkystoneAndFoundationDetection extends LinearOpMode
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         //Create an IMURobot object that we will use to run the robot
-        IMURobot robot = new IMURobot(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft, imu,
-                leftIntake, rightIntake, leftIntakeServo, rightIntakeServo, flimsy, this);
+        IMURobot robot = new IMURobot(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft, imu, leftIntake, rightIntake, leftIntakeServo, rightIntakeServo, this);
         robot.setupRobot();//calibrate IMU, set any required parameters
 
         /*
@@ -223,7 +220,7 @@ public class SkystoneAndFoundationDetection extends LinearOpMode
 
         }
         robot.completeStop();
-/*
+
         robot.gyroTurn(170,0.7);
         leftIntakeServo.setPosition(1);
         rightIntakeServo.setPosition(0);
@@ -259,7 +256,7 @@ public class SkystoneAndFoundationDetection extends LinearOpMode
             robot.gyroDriveEncoder(0.7,10);
             telemetry.update();
 
-        }*/
+        }
 
     }
 

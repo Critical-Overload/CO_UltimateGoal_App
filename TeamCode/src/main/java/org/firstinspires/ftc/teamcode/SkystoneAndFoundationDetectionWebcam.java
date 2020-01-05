@@ -72,6 +72,7 @@ public class SkystoneAndFoundationDetectionWebcam extends LinearOpMode
     private CRServo rightIntake;
     private Servo leftIntakeServo;
     private Servo rightIntakeServo;
+    private Servo flimsy;
 
     //Declare imu
     private BNO055IMU imu;
@@ -85,8 +86,9 @@ public class SkystoneAndFoundationDetectionWebcam extends LinearOpMode
         motorBackLeft = hardwareMap.dcMotor.get("BL");
         leftIntake = hardwareMap.crservo.get("LI");
         rightIntake = hardwareMap.crservo.get("RI");
-        leftIntakeServo = hardwareMap.servo.get("LIservo");
-        rightIntakeServo = hardwareMap.servo.get("RIservo");
+        leftIntakeServo = hardwareMap.servo.get("LIrelease");
+        rightIntakeServo = hardwareMap.servo.get("RIrelease");
+        flimsy = hardwareMap.servo.get("flimsy");
 
         //Initialize imu
         imu = hardwareMap.get(BNO055IMU.class, "imu");
@@ -99,7 +101,7 @@ public class SkystoneAndFoundationDetectionWebcam extends LinearOpMode
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         //Create an IMURobot object that we will use to run the robot
-        IMURobot robot = new IMURobot(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft, imu, leftIntake, rightIntake, leftIntakeServo, rightIntakeServo, this);
+        IMURobot robot = new IMURobot(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft, imu, leftIntake, rightIntake, leftIntakeServo, rightIntakeServo, flimsy, this);
         robot.setupRobot();//calibrate IMU, set any required parameters
 
         /*
@@ -116,14 +118,18 @@ public class SkystoneAndFoundationDetectionWebcam extends LinearOpMode
         // OR...  Do Not Activate the Camera Monitor View
         //phoneCam = new OpenCvInternalCamera(OpenCvInternalCamera.CameraDirection.BACK);
 
+        webcam.openCameraDevice();
+
         mainPipeline = new MainPipeline();
 
         webcam.setPipeline(mainPipeline);
+
 
         webcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
 
 
         waitForStart();
+
 
         telemetry.addData("Center Point", mainPipeline.bcenterx + "," + mainPipeline.bcentery);
         //Input Upright Mid Point: 240,320
@@ -158,13 +164,13 @@ public class SkystoneAndFoundationDetectionWebcam extends LinearOpMode
         }
         // 0 = foundation
         // 1 = skystone
-        robot.gyroStrafeEncoder(1,-90,30);
-        robot.gyroDriveEncoder(1,15);
-        webcam.openCameraDevice();
+        robot.flimsyUp();
+        robot.gyroStrafeEncoder(1,90,30);
+        robot.gyroDriveEncoder(-0.7,15);
 
         while (thing == 1 && sideS != 0){
 
-            robot.tankDrive(0.7,0.7);
+            robot.tankDrive(-0.4,-0.7);
             robot.resetAngle();
 
             //Input Upright Mid Point: 240,320
@@ -187,11 +193,43 @@ public class SkystoneAndFoundationDetectionWebcam extends LinearOpMode
 
         }
         robot.completeStop();
-        webcam.closeCameraDevice();
-        robot.gyroStrafeEncoder(1,-90,10);
-        // add arm code here
-        robot.gyroStrafeEncoder(1,90,20);
-        robot.gyroDriveEncoder(1,-50);
+        robot.gyroDriveEncoder(.4,10);
+        robot.gyroStrafeEncoder(.4,90,42);
+        robot.flimsyDown();
+        sleep(500);
+        robot.gyroStrafeEncoder(1,-90,20);
+        robot.gyroDriveEncoder(1,60);
+        flimsy.setPosition(0.8);
+        robot.gyroDriveEncoder(-1,40);
+
+        robot.gyroDriveEncoder(-0.7,15);
+
+        while (thing == 1 && sideS != 0){
+
+            robot.tankDrive(-0.7,-0.7);
+            robot.resetAngle();
+
+            //Input Upright Mid Point: 240,320
+            //Input Sideways Mid Point: 320,240
+            if (mainPipeline.scenterx > inputCenterX + accuracy){
+                side = "Right";
+                sideS = 1;
+
+            }else if (mainPipeline.scenterx < inputCenterX - accuracy){
+                side = "Left";
+                sideS = -1;
+
+            }
+            else{
+                side = "In the Center";
+                sideS = 0;
+
+            }
+            telemetry.update();
+
+        }
+
+
 
 
 
@@ -255,15 +293,25 @@ public class SkystoneAndFoundationDetectionWebcam extends LinearOpMode
 
             if (ycontours.size() > 0){
 
-                        Rect ylargestRect = Imgproc.boundingRect(ycontours.get(0));
-                        Imgproc.rectangle(mask, new Point(0, ylargestRect.y-20), new Point(640, ylargestRect.y + ylargestRect.height), new Scalar(255, 255, 255), -1, 8, 0);
+                double bmaxVal = 0;
+                int bmaxValIdx = 0;
+                for (int contourIdx = 0; contourIdx < ycontours.size(); contourIdx++) {
+                    double contourArea = Imgproc.contourArea(ycontours.get(contourIdx));
+                    if (bmaxVal < contourArea) {
+                        bmaxVal = contourArea;
+                        bmaxValIdx = contourIdx;
+                    }
+                }
+                        Rect ylargestRect = Imgproc.boundingRect(ycontours.get(bmaxValIdx ));
+                        Imgproc.rectangle(mask, new Point(0, ylargestRect.y-5), new Point(640, ylargestRect.y + ylargestRect.height), new Scalar(255, 255, 255), -1, 8, 0);
+                        Imgproc.line(output, new Point(0,ylargestRect.y-5), new Point(640, ylargestRect.y-5), new Scalar(50,50,50));
                         Imgproc.rectangle(output, new Point(0, ylargestRect.y), new Point(640, ylargestRect.y + ylargestRect.height), new Scalar(255, 0, 0), 1, 8, 0);
 
                         input.copyTo(cropped, mask);
                         cropped.copyTo(input);
 
                 Imgproc.cvtColor(input,grey, Imgproc.COLOR_RGB2GRAY);
-                Imgproc.threshold(grey, greyImg,15,255,Imgproc.THRESH_BINARY_INV);
+                Imgproc.threshold(grey, greyImg,20,255,Imgproc.THRESH_BINARY_INV);
                 Imgproc.findContours(greyImg, scontours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
             }
 

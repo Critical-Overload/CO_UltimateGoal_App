@@ -62,8 +62,8 @@ public class AutoSkystoneSideBlue extends LinearOpMode {
         leftIntake = hardwareMap.crservo.get("LI");
         rightIntake = hardwareMap.crservo.get("RI");
         //Initialize servos
-        leftIntakeServo = hardwareMap.servo.get("LIservo");
-        rightIntakeServo = hardwareMap.servo.get("RIservo");
+        leftIntakeServo = hardwareMap.servo.get("LIrelease");
+        rightIntakeServo = hardwareMap.servo.get("RIrelease");
         //Initialize arm
         arm = hardwareMap.dcMotor.get("arm");
 

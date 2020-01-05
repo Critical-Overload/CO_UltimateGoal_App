@@ -90,8 +90,8 @@ public class BuildplateDetectionTest extends LinearOpMode
         motorBackLeft = hardwareMap.dcMotor.get("BL");
         leftIntake = hardwareMap.crservo.get("LI");
         rightIntake = hardwareMap.crservo.get("RI");
-        leftIntakeServo = hardwareMap.servo.get("LIservo");
-        rightIntakeServo = hardwareMap.servo.get("RIservo");
+        leftIntakeServo = hardwareMap.servo.get("LIrelease");
+        rightIntakeServo = hardwareMap.servo.get("RIrelease");
 
 
 
