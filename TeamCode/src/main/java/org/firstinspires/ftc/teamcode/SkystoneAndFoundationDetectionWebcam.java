@@ -202,6 +202,7 @@ public class SkystoneAndFoundationDetectionWebcam extends LinearOpMode
         flimsy.setPosition(0.8);
         robot.gyroDriveEncoder(-1,40);
 
+        //New Changes
         robot.gyroDriveEncoder(-0.7,15);
 
         while (thing == 1 && sideS != 0){
