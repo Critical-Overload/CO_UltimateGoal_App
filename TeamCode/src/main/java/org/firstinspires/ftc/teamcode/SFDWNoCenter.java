@@ -27,6 +27,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Core;
@@ -49,8 +50,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-@Autonomous(name = "SkystoneAndFoundationDetectionWebcam")
-public class SkystoneAndFoundationDetectionWebcam extends LinearOpMode
+@Autonomous(name = "SFDWNoCenter")
+public class SFDWNoCenter extends LinearOpMode
 {
     double hue;
     double huetwo;
@@ -127,10 +128,6 @@ public class SkystoneAndFoundationDetectionWebcam extends LinearOpMode
 
         webcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
 
-
-        waitForStart();
-
-
         telemetry.addData("Center Point", mainPipeline.bcenterx + "," + mainPipeline.bcentery);
         //Input Upright Mid Point: 240,320
         //Input Sideways Mid Point: 320,240
@@ -162,46 +159,62 @@ public class SkystoneAndFoundationDetectionWebcam extends LinearOpMode
             sideS = 0;
 
         }
+
+        waitForStart();
+      //  int left = 0, center = 0, right = 0;
+        int blockPosition = 0;
+
+        int currentPos = mainPipeline.scenterx;
+
+        if(currentPos > 0 && currentPos < 200){
+            blockPosition = 1;
+        }else if(currentPos > 200 && currentPos < 400){
+            blockPosition = 2;
+        }else if(currentPos > 400 && currentPos < 700){
+            blockPosition = 3;
+        }
+
+        telemetry.addData("bp", blockPosition);
+        telemetry.addData("cp", mainPipeline.scenterx);
+        telemetry.update();
+        sleep(1000);
+        //kevin's left kidney
         // 0 = foundation
         // 1 = skystone
         robot.flimsyUp();
-        robot.gyroStrafeEncoder(1,90,30);
-        robot.gyroDriveEncoder(-0.7,15);
-
-        while (thing == 1 && sideS != 0 && opModeIsActive()){
-
-            robot.tankDrive(-0.4,-0.4);
-            robot.resetAngle();
-
-            //Input Upright Mid Point: 240,320
-            //Input Sideways Mid Point: 320,240
-            if (mainPipeline.scenterx > inputCenterX + accuracy){
-                side = "Right";
-                sideS = 1;
-
-            }else if (mainPipeline.scenterx < inputCenterX - accuracy){
-                side = "Left";
-                sideS = -1;
-
-            }
-            else{
-                side = "In the Center";
-                sideS = 0;
-
-            }
-            telemetry.update();
-
+        robot.gyroStrafeEncoder(1,90,60);
+        //5,3,12
+        switch(blockPosition){
+            case 1:
+                robot.gyroDriveEncoder(-.5, 15);
+                robot.gyroStrafeEncoder(.5, 90, 13);
+                robot.flimsyDown();
+                sleep(500);
+                robot.gyroStrafeEncoder(.5, -90, 20);
+                robot.gyroDriveEncoder(1, 180);
+                flimsy.setPosition(0.5);
+                break;
+            case 2:
+                robot.gyroStrafeEncoder(.5, 90, 13);
+                robot.flimsyDown();
+                sleep(500);
+                robot.gyroStrafeEncoder(.5, -90, 20);
+                robot.gyroDriveEncoder(1, 160);
+                flimsy.setPosition(0.5);
+                break;
+            case 3:
+                robot.gyroDriveEncoder(.5, 20);
+                robot.gyroStrafeEncoder(.5, 90, 13);
+                robot.flimsyDown();
+                sleep(500);
+                robot.gyroStrafeEncoder(.5, -90, 20);
+                robot.gyroDriveEncoder(1, 140);
+                flimsy.setPosition(0.5);
+                break;
+            default:
+                break;
         }
-        telemetry.addData("Side", side);
-        telemetry.update();
-        robot.completeStop();
-        robot.gyroDriveEncoder(.4,10);
-        robot.gyroStrafeEncoder(.4,90,42);
-        robot.flimsyDown();
-        sleep(500);
-        robot.gyroStrafeEncoder(1,-90,20);
-        robot.gyroDriveEncoder(1,120);
-        flimsy.setPosition(0.5);
+
 
         /*
         robot.gyroDriveEncoder(-1,40);
@@ -234,7 +247,7 @@ public class SkystoneAndFoundationDetectionWebcam extends LinearOpMode
 
         }*/
 
-
+/*
         robot.gyroDriveEncoder(-1, 180);
         robot.gyroStrafeEncoder(0.5, 90, 20);
         robot.flimsyDown();
@@ -244,8 +257,7 @@ public class SkystoneAndFoundationDetectionWebcam extends LinearOpMode
 
 
 
-
-
+*/
     }
 
     class MainPipeline extends OpenCvPipeline
@@ -312,13 +324,13 @@ public class SkystoneAndFoundationDetectionWebcam extends LinearOpMode
                         bmaxValIdx = contourIdx;
                     }
                 }
-                        Rect ylargestRect = Imgproc.boundingRect(ycontours.get(bmaxValIdx ));
-                        Imgproc.rectangle(mask, new Point(0, ylargestRect.y-5), new Point(640, ylargestRect.y + ylargestRect.height), new Scalar(255, 255, 255), -1, 8, 0);
-                        Imgproc.line(output, new Point(0,ylargestRect.y-5), new Point(640, ylargestRect.y-5), new Scalar(50,50,50));
-                        Imgproc.rectangle(output, new Point(0, ylargestRect.y), new Point(640, ylargestRect.y + ylargestRect.height), new Scalar(255, 0, 0), 1, 8, 0);
+                Rect ylargestRect = Imgproc.boundingRect(ycontours.get(bmaxValIdx ));
+                Imgproc.rectangle(mask, new Point(0, ylargestRect.y-5), new Point(640, ylargestRect.y + ylargestRect.height), new Scalar(255, 255, 255), -1, 8, 0);
+                Imgproc.line(output, new Point(0,ylargestRect.y-5), new Point(640, ylargestRect.y-5), new Scalar(50,50,50));
+                Imgproc.rectangle(output, new Point(0, ylargestRect.y), new Point(640, ylargestRect.y + ylargestRect.height), new Scalar(255, 0, 0), 1, 8, 0);
 
-                        input.copyTo(cropped, mask);
-                        cropped.copyTo(input);
+                input.copyTo(cropped, mask);
+                cropped.copyTo(input);
 
                 Imgproc.cvtColor(input,grey, Imgproc.COLOR_RGB2GRAY);
                 Imgproc.threshold(grey, greyImg,20,255,Imgproc.THRESH_BINARY_INV);
@@ -376,39 +388,39 @@ public class SkystoneAndFoundationDetectionWebcam extends LinearOpMode
             }
             if (bcontours.size()>0 && scontours.size()>0){
 
-                    double smaxVal = 0;
-                    int smaxValIdx = 0;
-                    for (int contourIdx = 0; contourIdx < scontours.size(); contourIdx++) {
-                        double contourArea = Imgproc.contourArea(scontours.get(contourIdx));
-                        if (smaxVal < contourArea) {
-                            smaxVal = contourArea;
-                            smaxValIdx = contourIdx;
-                        }
+                double smaxVal = 0;
+                int smaxValIdx = 0;
+                for (int contourIdx = 0; contourIdx < scontours.size(); contourIdx++) {
+                    double contourArea = Imgproc.contourArea(scontours.get(contourIdx));
+                    if (smaxVal < contourArea) {
+                        smaxVal = contourArea;
+                        smaxValIdx = contourIdx;
                     }
+                }
 
-                    Imgproc.drawContours(output, scontours, smaxValIdx, new Scalar(0, 255, 0), 3);
+                Imgproc.drawContours(output, scontours, smaxValIdx, new Scalar(0, 255, 0), 3);
 
-                    Rect slargestRect = Imgproc.boundingRect(scontours.get(smaxValIdx));
-                    Imgproc.rectangle(output, slargestRect.tl(), slargestRect.br(), new Scalar(100, 255, 100), 1, 8, 0);
-                    scenterx = (slargestRect.x +slargestRect.x + slargestRect.width)/2;
-                    scentery = (slargestRect.y + slargestRect.y + slargestRect.height)/2;
+                Rect slargestRect = Imgproc.boundingRect(scontours.get(smaxValIdx));
+                Imgproc.rectangle(output, slargestRect.tl(), slargestRect.br(), new Scalar(100, 255, 100), 1, 8, 0);
+                scenterx = (slargestRect.x +slargestRect.x + slargestRect.width)/2;
+                scentery = (slargestRect.y + slargestRect.y + slargestRect.height)/2;
 
-                    double bmaxVal = 0;
-                    int bmaxValIdx = 0;
-                    for (int contourIdx = 0; contourIdx < bcontours.size(); contourIdx++) {
-                        double contourArea = Imgproc.contourArea(bcontours.get(contourIdx));
-                        if (bmaxVal < contourArea) {
-                            bmaxVal = contourArea;
-                            bmaxValIdx = contourIdx;
-                        }
+                double bmaxVal = 0;
+                int bmaxValIdx = 0;
+                for (int contourIdx = 0; contourIdx < bcontours.size(); contourIdx++) {
+                    double contourArea = Imgproc.contourArea(bcontours.get(contourIdx));
+                    if (bmaxVal < contourArea) {
+                        bmaxVal = contourArea;
+                        bmaxValIdx = contourIdx;
                     }
+                }
 
-                    Imgproc.drawContours(output, bcontours, bmaxValIdx, new Scalar(0, 255, 0), 3);
+                Imgproc.drawContours(output, bcontours, bmaxValIdx, new Scalar(0, 255, 0), 3);
 
-                    Rect blargestRect = Imgproc.boundingRect(bcontours.get(bmaxValIdx));
-                    Imgproc.rectangle(output, blargestRect.tl(), blargestRect.br(), new Scalar(0, 255, 0), 1, 8, 0);
-                    bcenterx = (blargestRect.x +blargestRect.x + blargestRect.width)/2;
-                    bcentery = (blargestRect.y + blargestRect.y + blargestRect.height)/2;
+                Rect blargestRect = Imgproc.boundingRect(bcontours.get(bmaxValIdx));
+                Imgproc.rectangle(output, blargestRect.tl(), blargestRect.br(), new Scalar(0, 255, 0), 1, 8, 0);
+                bcenterx = (blargestRect.x +blargestRect.x + blargestRect.width)/2;
+                bcentery = (blargestRect.y + blargestRect.y + blargestRect.height)/2;
 
 
 
