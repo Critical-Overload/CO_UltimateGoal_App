@@ -427,6 +427,14 @@ public class SFDWNoCenter extends LinearOpMode
 
 
             }
+            Imgproc.line(output, new Point(0,0), new Point(0,480), new Scalar(255,255,255), 5,8);
+            Imgproc.line(output, new Point(100,0), new Point(100,480), new Scalar(255,255,255), 5,8);
+            Imgproc.line(output, new Point(200,0), new Point(200,480), new Scalar(255,255,255), 5,8);
+            Imgproc.line(output, new Point(300,0), new Point(300,480), new Scalar(255,255,255), 5,8);
+            Imgproc.line(output, new Point(400,0), new Point(400,480), new Scalar(255,255,255), 5,8);
+            Imgproc.line(output, new Point(500,0), new Point(500,480), new Scalar(255,255,255), 5,8);
+            Imgproc.line(output, new Point(600,0), new Point(600,480), new Scalar(255,255,255), 5,8);
+
 
 
             return output;
