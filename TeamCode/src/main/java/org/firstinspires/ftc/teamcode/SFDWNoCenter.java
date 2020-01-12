@@ -166,11 +166,11 @@ public class SFDWNoCenter extends LinearOpMode
 
         int currentPos = mainPipeline.scenterx;
 
-        if(currentPos > 0 && currentPos < 200){
+        if(currentPos > 0 && currentPos < 100){
             blockPosition = 1;
-        }else if(currentPos > 200 && currentPos < 400){
+        }else if(currentPos > 100 && currentPos < 300){
             blockPosition = 2;
-        }else if(currentPos > 400 && currentPos < 700){
+        }else if(currentPos > 300 && currentPos < 500){
             blockPosition = 3;
         }
 
@@ -186,30 +186,59 @@ public class SFDWNoCenter extends LinearOpMode
         //5,3,12
         switch(blockPosition){
             case 1:
-                robot.gyroDriveEncoder(-.5, 15);
-                robot.gyroStrafeEncoder(.5, 90, 13);
-                robot.flimsyDown();
-                sleep(500);
-                robot.gyroStrafeEncoder(.5, -90, 20);
-                robot.gyroDriveEncoder(1, 180);
-                flimsy.setPosition(0.5);
-                break;
-            case 2:
-                robot.gyroStrafeEncoder(.5, 90, 13);
-                robot.flimsyDown();
-                sleep(500);
-                robot.gyroStrafeEncoder(.5, -90, 20);
-                robot.gyroDriveEncoder(1, 160);
-                flimsy.setPosition(0.5);
-                break;
-            case 3:
-                robot.gyroDriveEncoder(.5, 20);
+                robot.gyroDriveEncoder(-.5, 30);
                 robot.gyroStrafeEncoder(.5, 90, 13);
                 robot.flimsyDown();
                 sleep(500);
                 robot.gyroStrafeEncoder(.5, -90, 20);
                 robot.gyroDriveEncoder(1, 140);
+                flimsy.setPosition(0.7);
+                sleep(500);
+                robot.gyroDriveEncoder(-1, 160);
+                robot.flimsyDown();
+                sleep(500);
+                robot.gyroStrafeEncoder(.5, -90, 20);
+                robot.gyroDriveEncoder(1, 160);
+                flimsy.setPosition(0.7);
+                sleep(500);
+                robot.gyroDriveEncoder(-1, 40);
+                break;
+            case 2:
+                robot.gyroDriveEncoder(-.5, 10);
+                robot.gyroStrafeEncoder(.5, 90, 13);
+                robot.flimsyDown();
+                sleep(500);
+                robot.gyroStrafeEncoder(.5, -90, 20);
+                robot.gyroDriveEncoder(1, 120);
                 flimsy.setPosition(0.5);
+                sleep(500);
+                robot.gyroDriveEncoder(-1, 180);
+                robot.gyroStrafeEncoder(.5, 90, 20);
+                robot.flimsyDown();
+                sleep(500);
+                robot.gyroStrafeEncoder(.5, -90, 20);
+                robot.gyroDriveEncoder(1, 180);
+                flimsy.setPosition(0.7);
+                sleep(500);
+                robot.gyroDriveEncoder(-1, 40);
+                break;
+            case 3:
+                robot.gyroDriveEncoder(.5, 5);
+                robot.gyroStrafeEncoder(.5, 90, 13);
+                robot.flimsyDown();
+                sleep(500);
+                robot.gyroStrafeEncoder(.5, -90, 20);
+                robot.gyroDriveEncoder(1, 100);
+                flimsy.setPosition(0.5);
+                robot.gyroDriveEncoder(-1, 160);
+                robot.gyroStrafeEncoder(.5, 90, 20);
+                robot.flimsyDown();
+                sleep(500);
+                robot.gyroStrafeEncoder(.5, -90, 20);
+                robot.gyroDriveEncoder(1, 160);
+                flimsy.setPosition(0.7);
+                sleep(500);
+                robot.gyroDriveEncoder(-1, 40);
                 break;
             default:
                 break;
@@ -325,15 +354,15 @@ public class SFDWNoCenter extends LinearOpMode
                     }
                 }
                 Rect ylargestRect = Imgproc.boundingRect(ycontours.get(bmaxValIdx ));
-                Imgproc.rectangle(mask, new Point(0, ylargestRect.y-5), new Point(640, ylargestRect.y + ylargestRect.height), new Scalar(255, 255, 255), -1, 8, 0);
-                Imgproc.line(output, new Point(0,ylargestRect.y-5), new Point(640, ylargestRect.y-5), new Scalar(50,50,50));
+                Imgproc.rectangle(mask, new Point(0, ylargestRect.y), new Point(640, ylargestRect.y + ylargestRect.height), new Scalar(255, 255, 255), -1, 8, 0);
+                Imgproc.line(output, new Point(0,ylargestRect.y), new Point(640, ylargestRect.y), new Scalar(50,50,50));
                 Imgproc.rectangle(output, new Point(0, ylargestRect.y), new Point(640, ylargestRect.y + ylargestRect.height), new Scalar(255, 0, 0), 1, 8, 0);
 
                 input.copyTo(cropped, mask);
                 cropped.copyTo(input);
 
                 Imgproc.cvtColor(input,grey, Imgproc.COLOR_RGB2GRAY);
-                Imgproc.threshold(grey, greyImg,20,255,Imgproc.THRESH_BINARY_INV);
+                Imgproc.threshold(grey, greyImg,25,255,Imgproc.THRESH_BINARY_INV);
                 Imgproc.findContours(greyImg, scontours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
             }
 
@@ -427,13 +456,6 @@ public class SFDWNoCenter extends LinearOpMode
 
 
             }
-            Imgproc.line(output, new Point(0,0), new Point(0,480), new Scalar(255,255,255), 5,8);
-            Imgproc.line(output, new Point(100,0), new Point(100,480), new Scalar(255,255,255), 5,8);
-            Imgproc.line(output, new Point(200,0), new Point(200,480), new Scalar(255,255,255), 5,8);
-            Imgproc.line(output, new Point(300,0), new Point(300,480), new Scalar(255,255,255), 5,8);
-            Imgproc.line(output, new Point(400,0), new Point(400,480), new Scalar(255,255,255), 5,8);
-            Imgproc.line(output, new Point(500,0), new Point(500,480), new Scalar(255,255,255), 5,8);
-            Imgproc.line(output, new Point(600,0), new Point(600,480), new Scalar(255,255,255), 5,8);
 
 
 
