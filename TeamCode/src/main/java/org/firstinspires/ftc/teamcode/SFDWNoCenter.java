@@ -60,10 +60,6 @@ public class SFDWNoCenter extends LinearOpMode
     double threshold = 150;
     double sensitivity;
     String side = "";
-    double sideM;
-    double sideS;
-    double thing;
-    boolean onoff;
 
     private DcMotor motorFrontRight;
     private DcMotor motorFrontLeft;
@@ -131,34 +127,6 @@ public class SFDWNoCenter extends LinearOpMode
         telemetry.addData("Center Point", mainPipeline.bcenterx + "," + mainPipeline.bcentery);
         //Input Upright Mid Point: 240,320
         //Input Sideways Mid Point: 320,240
-        double inputCenterX = 320;
-        double accuracy = 30;
-        thing = 1;
-
-        if (mainPipeline.bcenterx > inputCenterX + accuracy){
-            side = "Right";
-            sideM = 1;
-        }else if (mainPipeline.bcenterx < inputCenterX - accuracy){
-            side = "Left";
-            sideM = -1;
-        }
-        else{
-            side = "In the Center";
-            sideM = 0;
-
-        }
-        if (mainPipeline.scenterx > inputCenterX + accuracy){
-            side = "Right";
-            sideS = 1;
-        }else if (mainPipeline.scenterx < inputCenterX - accuracy){
-            side = "Left";
-            sideS = -1;
-        }
-        else{
-            side = "In the Center";
-            sideS = 0;
-
-        }
 
         waitForStart();
       //  int left = 0, center = 0, right = 0;
@@ -168,9 +136,9 @@ public class SFDWNoCenter extends LinearOpMode
 
         if(currentPos > 0 && currentPos < 100){
             blockPosition = 1;
-        }else if(currentPos > 100 && currentPos < 300){
+        }else if(currentPos > 100 && currentPos < 320){
             blockPosition = 2;
-        }else if(currentPos > 300 && currentPos < 500){
+        }else if(currentPos > 320 && currentPos < 500){
             blockPosition = 3;
         }
 
@@ -178,115 +146,77 @@ public class SFDWNoCenter extends LinearOpMode
         telemetry.addData("cp", mainPipeline.scenterx);
         telemetry.update();
         sleep(1000);
-        //kevin's left kidney
         // 0 = foundation
         // 1 = skystone
         robot.flimsyUp();
-        robot.gyroStrafeEncoder(1,90,60);
+        robot.gyroStrafeEncoder(1,90,62);
         //5,3,12
         switch(blockPosition){
             case 1:
-                robot.gyroDriveEncoder(-.5, 30);
-                robot.gyroStrafeEncoder(.5, 90, 13);
+                robot.gyroDriveEncoder(-.5, 28);
+                robot.gyroStrafeEncoder(.5, 90, 12);
                 robot.flimsyDown();
                 sleep(500);
                 robot.gyroStrafeEncoder(.5, -90, 20);
-                robot.gyroDriveEncoder(1, 140);
-                flimsy.setPosition(0.7);
+                robot.gyroDriveEncoder(.7, 135);
+                flimsy.setPosition(0.5);
                 sleep(500);
-                robot.gyroDriveEncoder(-1, 160);
+                robot.gyroDriveEncoder(-.7, 182);
+                robot.gyroStrafeEncoder(.5, 90, 12);
                 robot.flimsyDown();
                 sleep(500);
                 robot.gyroStrafeEncoder(.5, -90, 20);
-                robot.gyroDriveEncoder(1, 160);
-                flimsy.setPosition(0.7);
+                robot.gyroDriveEncoder(1, 177);
+                flimsy.setPosition(0.4);
                 sleep(500);
-                robot.gyroDriveEncoder(-1, 40);
+                robot.gyroDriveEncoder(-1, 20);
+                robot.gyroStrafeEncoder(1,90,10);
                 break;
             case 2:
-                robot.gyroDriveEncoder(-.5, 10);
-                robot.gyroStrafeEncoder(.5, 90, 13);
+                robot.gyroDriveEncoder(-.5, 7);
+                robot.gyroStrafeEncoder(.5, 90, 12);
                 robot.flimsyDown();
                 sleep(500);
                 robot.gyroStrafeEncoder(.5, -90, 20);
-                robot.gyroDriveEncoder(1, 120);
+                robot.gyroDriveEncoder(.7, 115);
                 flimsy.setPosition(0.5);
                 sleep(500);
-                robot.gyroDriveEncoder(-1, 180);
-                robot.gyroStrafeEncoder(.5, 90, 20);
+                robot.gyroDriveEncoder(-.7, 180);
+                robot.gyroStrafeEncoder(.5, 90, 17);
                 robot.flimsyDown();
                 sleep(500);
                 robot.gyroStrafeEncoder(.5, -90, 20);
-                robot.gyroDriveEncoder(1, 180);
-                flimsy.setPosition(0.7);
+                robot.gyroDriveEncoder(1, 190);
+                flimsy.setPosition(0.4);
                 sleep(500);
-                robot.gyroDriveEncoder(-1, 40);
+                robot.gyroDriveEncoder(-1, 20);
+                robot.gyroStrafeEncoder(1,90,10);
                 break;
             case 3:
-                robot.gyroDriveEncoder(.5, 5);
-                robot.gyroStrafeEncoder(.5, 90, 13);
+                robot.gyroDriveEncoder(.5, 10);
+                robot.gyroStrafeEncoder(.5, 90, 12);
                 robot.flimsyDown();
                 sleep(500);
                 robot.gyroStrafeEncoder(.5, -90, 20);
-                robot.gyroDriveEncoder(1, 100);
+                robot.gyroDriveEncoder(.7, 95);
                 flimsy.setPosition(0.5);
-                robot.gyroDriveEncoder(-1, 160);
-                robot.gyroStrafeEncoder(.5, 90, 20);
+                sleep(500);
+                robot.gyroDriveEncoder(-.7, 155);
+                robot.gyroStrafeEncoder(.5, 90, 21);
                 robot.flimsyDown();
                 sleep(500);
-                robot.gyroStrafeEncoder(.5, -90, 20);
-                robot.gyroDriveEncoder(1, 160);
-                flimsy.setPosition(0.7);
+                robot.gyroStrafeEncoder(.5, -90, 120);
+                robot.gyroDriveEncoder(1, 150);
+                flimsy.setPosition(0.4);
                 sleep(500);
-                robot.gyroDriveEncoder(-1, 40);
+                robot.gyroDriveEncoder(-1, 20);
+                robot.gyroStrafeEncoder(1,90,10);
+
                 break;
             default:
                 break;
         }
 
-
-        /*
-        robot.gyroDriveEncoder(-1,40);
-
-        //New Changes
-        robot.gyroDriveEncoder(-0.7,15);
-
-        while (thing == 1 && sideS != 0 && opModeIsActive()){
-
-            robot.tankDrive(-0.7,-0.7);
-            robot.resetAngle();
-
-            //Input Upright Mid Point: 240,320
-            //Input Sideways Mid Point: 320,240
-            if (mainPipeline.scenterx > inputCenterX + accuracy){
-                side = "Right";
-                sideS = 1;
-
-            }else if (mainPipeline.scenterx < inputCenterX - accuracy){
-                side = "Left";
-                sideS = -1;
-
-            }
-            else{
-                side = "In the Center";
-                sideS = 0;
-
-            }
-            telemetry.update();
-
-        }*/
-
-/*
-        robot.gyroDriveEncoder(-1, 180);
-        robot.gyroStrafeEncoder(0.5, 90, 20);
-        robot.flimsyDown();
-        sleep(500);
-        robot.gyroStrafeEncoder(0.5, -90, 20);
-        robot.gyroDriveEncoder(1, 180);
-
-
-
-*/
     }
 
     class MainPipeline extends OpenCvPipeline
@@ -325,25 +255,29 @@ public class SFDWNoCenter extends LinearOpMode
             //yellow = 60
             //Blue = 240
             //red = 0 or 360
-            hue = 360;
+            hue = 240;
             sensitivity = 20;
             huetwo = 50;
 
 
+            //blur image
             Imgproc.GaussianBlur(input, blurImg, new Size(5, 5), 0);
 
-            //converting blured image from BGR to HSV
+            //converting blurred image from BGR to HSV
             Imgproc.cvtColor(blurImg, hsvImage, Imgproc.COLOR_RGB2HSV);
 
-            Core.inRange(hsvImage, new Scalar((hue / 2) - sensitivity, 100, 50), new Scalar((hue / 2) + sensitivity, 255, 255), buildplate);
-
-
-            Imgproc.findContours(buildplate, bcontours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+            //find yellow contours
             Core.inRange(hsvImage, new Scalar((huetwo / 2) - sensitivity, 100, 50), new Scalar((huetwo / 2) + sensitivity, 255, 255), yellow);
             Imgproc.findContours(yellow, ycontours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 
+            Core.inRange(hsvImage, new Scalar((hue / 2) - sensitivity, 100, 50), new Scalar((hue / 2) + sensitivity, 255, 255), buildplate);
+            Imgproc.findContours(buildplate, bcontours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+
+
+
             if (ycontours.size() > 0){
 
+                //Find the largest yellow contour
                 double bmaxVal = 0;
                 int bmaxValIdx = 0;
                 for (int contourIdx = 0; contourIdx < ycontours.size(); contourIdx++) {
@@ -353,48 +287,27 @@ public class SFDWNoCenter extends LinearOpMode
                         bmaxValIdx = contourIdx;
                     }
                 }
+                //Find the bounding box of the largest yellow contour
                 Rect ylargestRect = Imgproc.boundingRect(ycontours.get(bmaxValIdx ));
                 Imgproc.rectangle(mask, new Point(0, ylargestRect.y), new Point(640, ylargestRect.y + ylargestRect.height), new Scalar(255, 255, 255), -1, 8, 0);
+
                 Imgproc.line(output, new Point(0,ylargestRect.y), new Point(640, ylargestRect.y), new Scalar(50,50,50));
                 Imgproc.rectangle(output, new Point(0, ylargestRect.y), new Point(640, ylargestRect.y + ylargestRect.height), new Scalar(255, 0, 0), 1, 8, 0);
 
+                //create mask
                 input.copyTo(cropped, mask);
                 cropped.copyTo(input);
 
+                //find black contours
                 Imgproc.cvtColor(input,grey, Imgproc.COLOR_RGB2GRAY);
                 Imgproc.threshold(grey, greyImg,25,255,Imgproc.THRESH_BINARY_INV);
                 Imgproc.findContours(greyImg, scontours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
             }
 
-
-            if (bcontours.size()>0)
-            {
-
-                //For each contour found
-
-                double bmaxVal = 0;
-                int bmaxValIdx = 0;
-                for (int contourIdx = 0; contourIdx < bcontours.size(); contourIdx++) {
-                    double contourArea = Imgproc.contourArea(bcontours.get(contourIdx));
-                    if (bmaxVal < contourArea) {
-                        bmaxVal = contourArea;
-                        bmaxValIdx = contourIdx;
-                    }
-                }
-
-                Imgproc.drawContours(output, bcontours, bmaxValIdx, new Scalar(0, 255, 0), 3);
-
-                Rect blargestRect = Imgproc.boundingRect(bcontours.get(bmaxValIdx));
-                Imgproc.rectangle(output, blargestRect.tl(), blargestRect.br(), new Scalar(0, 255, 0), 1, 8, 0);
-                bcenterx = (blargestRect.x +blargestRect.x + blargestRect.width)/2;
-                bcentery = (blargestRect.y + blargestRect.y + blargestRect.height)/2;
-
-
-
-            }
             if(scontours.size()>0)
             {
 
+                //find largest black contour
                 double smaxVal = 0;
                 int smaxValIdx = 0;
                 for (int contourIdx = 0; contourIdx < scontours.size(); contourIdx++) {
@@ -407,57 +320,13 @@ public class SFDWNoCenter extends LinearOpMode
 
                 Imgproc.drawContours(output, scontours, smaxValIdx, new Scalar(0, 255, 0), 3);
 
+                // find bounding box and center point for largest black contour
                 Rect slargestRect = Imgproc.boundingRect(scontours.get(smaxValIdx));
                 Imgproc.rectangle(output, slargestRect.tl(), slargestRect.br(), new Scalar(100, 255, 100), 1, 8, 0);
                 scenterx = (slargestRect.x +slargestRect.x + slargestRect.width)/2;
                 scentery = (slargestRect.y + slargestRect.y + slargestRect.height)/2;
 
-
-
             }
-            if (bcontours.size()>0 && scontours.size()>0){
-
-                double smaxVal = 0;
-                int smaxValIdx = 0;
-                for (int contourIdx = 0; contourIdx < scontours.size(); contourIdx++) {
-                    double contourArea = Imgproc.contourArea(scontours.get(contourIdx));
-                    if (smaxVal < contourArea) {
-                        smaxVal = contourArea;
-                        smaxValIdx = contourIdx;
-                    }
-                }
-
-                Imgproc.drawContours(output, scontours, smaxValIdx, new Scalar(0, 255, 0), 3);
-
-                Rect slargestRect = Imgproc.boundingRect(scontours.get(smaxValIdx));
-                Imgproc.rectangle(output, slargestRect.tl(), slargestRect.br(), new Scalar(100, 255, 100), 1, 8, 0);
-                scenterx = (slargestRect.x +slargestRect.x + slargestRect.width)/2;
-                scentery = (slargestRect.y + slargestRect.y + slargestRect.height)/2;
-
-                double bmaxVal = 0;
-                int bmaxValIdx = 0;
-                for (int contourIdx = 0; contourIdx < bcontours.size(); contourIdx++) {
-                    double contourArea = Imgproc.contourArea(bcontours.get(contourIdx));
-                    if (bmaxVal < contourArea) {
-                        bmaxVal = contourArea;
-                        bmaxValIdx = contourIdx;
-                    }
-                }
-
-                Imgproc.drawContours(output, bcontours, bmaxValIdx, new Scalar(0, 255, 0), 3);
-
-                Rect blargestRect = Imgproc.boundingRect(bcontours.get(bmaxValIdx));
-                Imgproc.rectangle(output, blargestRect.tl(), blargestRect.br(), new Scalar(0, 255, 0), 1, 8, 0);
-                bcenterx = (blargestRect.x +blargestRect.x + blargestRect.width)/2;
-                bcentery = (blargestRect.y + blargestRect.y + blargestRect.height)/2;
-
-
-
-
-
-            }
-
-
 
             return output;
         }
