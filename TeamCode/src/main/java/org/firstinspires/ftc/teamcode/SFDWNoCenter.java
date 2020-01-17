@@ -191,6 +191,7 @@ public class SFDWNoCenter extends LinearOpMode
                 sleep(500);
                 robot.gyroDriveEncoder(-1, 20);
                 robot.gyroStrafeEncoder(1,90,10);
+                //new changes
                 break;
             case 3:
                 robot.gyroDriveEncoder(.5, 10);
