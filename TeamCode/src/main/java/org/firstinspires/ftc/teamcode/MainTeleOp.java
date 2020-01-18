@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name = "MainTeleOp")
+@TeleOp(name = "AAMainTeleOp")
 public class MainTeleOp extends LinearOpMode {
 
     private DcMotor motorFrontRight;
