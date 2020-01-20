@@ -167,7 +167,7 @@ public class IMURobot {
      */
     public void setupRobot() throws InterruptedException{
         motorBackRight.setDirection(DcMotor.Direction.REVERSE);
-        motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
+        motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
 
 
         motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -410,6 +410,7 @@ public class IMURobot {
      * @throws InterruptedException if robot is stopped
      */
     public void gyroDriveEncoder(double power, double cm) throws InterruptedException{
+        setNewGain(0.05);
         gyroStrafeEncoder(power, 0, cm);
     }
 
@@ -494,7 +495,7 @@ public class IMURobot {
 
         resetEncoders();
         resetAngle();
-        setNewGain(0.01);
+        setNewGain(0.02);
         while(Math.abs(motorFrontLeft.getCurrentPosition()) < ticks && opMode.opModeIsActive()){
             telemetry.addData("Target ticks", ticks);
             telemetry.addData("Current ticks", Math.abs(motorFrontLeft.getCurrentPosition()));

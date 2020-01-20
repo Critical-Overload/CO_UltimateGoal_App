@@ -60,6 +60,8 @@ public class AASkystoneSideRed extends LinearOpMode
     double threshold = 150;
     double sensitivity;
     String side = "";
+    int p1 = 100;
+    int p2 = 320;
 
     private DcMotor motorFrontRight;
     private DcMotor motorFrontLeft;
@@ -134,11 +136,12 @@ public class AASkystoneSideRed extends LinearOpMode
 
         int currentPos = mainPipeline.scenterx;
 
-        if(currentPos > 0 && currentPos < 100){
+
+        if(currentPos > 0 && currentPos < p1){
             blockPosition = 1;
-        }else if(currentPos > 100 && currentPos < 320){
+        }else if(currentPos > p1 && currentPos < p2){
             blockPosition = 2;
-        }else if(currentPos > 320 && currentPos < 500){
+        }else if(currentPos > p2 && currentPos < 500){
             blockPosition = 3;
         }
 
@@ -149,7 +152,7 @@ public class AASkystoneSideRed extends LinearOpMode
         // 0 = foundation
         // 1 = skystone
         robot.flimsyUp();
-        robot.gyroStrafeEncoder(1,90,62);
+        robot.gyroStrafeEncoder(1,90,64);
         //5,3,12
         switch(blockPosition){
             case 1:
@@ -162,10 +165,10 @@ public class AASkystoneSideRed extends LinearOpMode
                 flimsy.setPosition(0.5);
                 sleep(500);
                 robot.gyroDriveEncoder(-.7, 182);
-                robot.gyroStrafeEncoder(.5, 90, 12);
+                robot.gyroStrafeEncoder(.5, 90, 20);
                 robot.flimsyDown();
                 sleep(500);
-                robot.gyroStrafeEncoder(.5, -90, 20);
+                robot.gyroStrafeEncoder(.5, -90, 27);
                 robot.gyroDriveEncoder(1, 177);
                 flimsy.setPosition(0.4);
                 sleep(500);
@@ -182,15 +185,14 @@ public class AASkystoneSideRed extends LinearOpMode
                 flimsy.setPosition(0.5);
                 sleep(500);
                 robot.gyroDriveEncoder(-.7, 180);
-                robot.gyroStrafeEncoder(.5, 90, 17);
+                robot.gyroStrafeEncoder(.5, 90, 20);
                 robot.flimsyDown();
                 sleep(500);
-                robot.gyroStrafeEncoder(.5, -90, 20);
+                robot.gyroStrafeEncoder(.5, -90, 25);
                 robot.gyroDriveEncoder(1, 190);
                 flimsy.setPosition(0.4);
                 sleep(500);
-                robot.gyroDriveEncoder(-1, 20);
-                robot.gyroStrafeEncoder(1,90,10);
+                robot.gyroDriveEncoder(-1, 25);
                 //new changes
                 break;
             case 3:
@@ -203,10 +205,10 @@ public class AASkystoneSideRed extends LinearOpMode
                 flimsy.setPosition(0.5);
                 sleep(500);
                 robot.gyroDriveEncoder(-.7, 155);
-                robot.gyroStrafeEncoder(.5, 90, 21);
+                robot.gyroStrafeEncoder(.5, 90, 23);
                 robot.flimsyDown();
                 sleep(500);
-                robot.gyroStrafeEncoder(.5, -90, 120);
+                robot.gyroStrafeEncoder(.5, -90, 22);
                 robot.gyroDriveEncoder(1, 150);
                 flimsy.setPosition(0.4);
                 sleep(500);
@@ -243,6 +245,15 @@ public class AASkystoneSideRed extends LinearOpMode
 
         @Override
         public Mat processFrame(Mat input) {
+            hsvImage.release();
+            buildplate.release();
+            blurImg.release();
+            cannyOutput.release();
+            output.release();
+            yellow.release();
+            grey.release();
+            greyImg.release();
+
             input.copyTo(output);
             Mat mask = new Mat(input.rows(), input.cols(), CvType.CV_8U, Scalar.all(0));
             Mat cropped = new Mat(input.size(),input.type(),myColor);
@@ -328,6 +339,9 @@ public class AASkystoneSideRed extends LinearOpMode
                 scentery = (slargestRect.y + slargestRect.y + slargestRect.height)/2;
 
             }
+            Imgproc.line(output, new Point(p1,0),new Point(p1,640),new Scalar(0,0,0),2);
+            Imgproc.line(output, new Point(p2,0),new Point(p2,640),new Scalar(0,0,0),2);
+
 
             return output;
         }
