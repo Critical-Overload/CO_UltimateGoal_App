@@ -104,7 +104,6 @@ public class CVDetectionTest extends LinearOpMode
          */
         phoneCam.startStreaming(640, 480, OpenCvCameraRotation.SIDEWAYS_LEFT);
 
-
         /*
          * Wait for the user to press start on the Driver Station
          */
@@ -167,19 +166,27 @@ public class CVDetectionTest extends LinearOpMode
 
         int bcenterx;
         int bcentery;
-        Mat hsvImage = new Mat();
-        Mat buildplate = new Mat();
-        Mat blurImg = new Mat();
-        Mat output = new Mat();
-        Mat yellow = new Mat();
+        Mat hsvImage = new Mat(); //released
+        Mat buildplate = new Mat(); //released
+        Mat blurImg = new Mat(); //released
+        Mat output = new Mat(); //released
+        Mat yellow = new Mat(); //released
         Scalar myColor = new Scalar(0,255,255);
-        Mat test = new Mat();
-        Mat grey = new Mat();
-        Mat greyImg = new Mat();
+        Mat grey = new Mat(); //released
+        Mat greyImg = new Mat(); //released
+
 
 
         @Override
         public Mat processFrame(Mat input){
+            hsvImage.release();
+            buildplate.release();
+            blurImg.release();
+            output.release();
+            yellow.release();
+            grey.release();
+            greyImg.release();
+
             input.copyTo(output);
             Mat mask = new Mat(input.rows(), input.cols(), CvType.CV_8U, Scalar.all(0));
             Mat cropped = new Mat(input.size(),input.type(),myColor);
@@ -277,6 +284,7 @@ public class CVDetectionTest extends LinearOpMode
 
             }
             return output;
+
 
         }
 

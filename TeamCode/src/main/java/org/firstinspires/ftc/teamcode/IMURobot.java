@@ -37,6 +37,7 @@ public class IMURobot {
     private Servo leftIntakeServo;
     private Servo rightIntakeServo;
     private Servo flimsy;
+    private Servo capRelease;
 
     //Declare the IMU
     private BNO055IMU imu;
@@ -81,6 +82,37 @@ public class IMURobot {
         this.rightIntake = rightIntake;
         this.leftIntakeServo = leftIntakeServo;
         this.rightIntakeServo = rightIntakeServo;
+        this.flimsy = flimsy;
+        this.opMode = opMode;
+        this.telemetry = opMode.telemetry;
+    }
+
+    /**
+     *
+     * @param motorFrontRight
+     * @param motorFrontLeft
+     * @param motorBackRight
+     * @param motorBackLeft
+     * @param imu
+     * @param leftIntake
+     * @param rightIntake
+     * @param flimsy  Servo used to move skystone and foundation
+     * @param opMode The Op Mode using the IMURobot object;
+     *                for access to the methods opModeIsActive, the exception InterruptedException, and telemetry
+     */
+    public IMURobot(DcMotor motorFrontRight, DcMotor motorFrontLeft, DcMotor motorBackRight, DcMotor motorBackLeft,
+                    BNO055IMU imu, CRServo leftIntake, CRServo rightIntake, Servo leftIntakeServo,
+                    Servo rightIntakeServo, Servo flimsy, Servo capRelease, LinearOpMode opMode){
+        this.motorFrontRight = motorFrontRight;
+        this.motorFrontLeft = motorFrontLeft;
+        this.motorBackRight = motorBackRight;
+        this.motorBackLeft = motorBackLeft;
+        this.imu = imu;
+        this.leftIntake = leftIntake;
+        this.rightIntake = rightIntake;
+        this.leftIntakeServo = leftIntakeServo;
+        this.rightIntakeServo = rightIntakeServo;
+        this.capRelease = capRelease;
         this.flimsy = flimsy;
         this.opMode = opMode;
         this.telemetry = opMode.telemetry;
@@ -571,5 +603,11 @@ public class IMURobot {
     public void releaseIntake() {
         leftIntakeServo.setPosition(1);
         rightIntakeServo.setPosition(0);
+    }
+    public void releaseCap(){
+        capRelease.setPosition(1);
+    }
+    public void holdCap(){
+        capRelease.setPosition(0.3);
     }
 }
