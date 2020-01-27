@@ -152,19 +152,19 @@ public class AASkystoneSideBlue extends LinearOpMode
         // 0 = foundation
         // 1 = skystone
         robot.flimsyUp();
-        robot.gyroStrafeEncoder(1,90,64);
+        robot.gyroStrafeEncoder(0.6,90,64);
         //5,3,12
         switch(blockPosition){
             case 3:
-                robot.gyroDriveEncoder(.5, 23);
+                robot.gyroDriveEncoder(.5, 14);
                 robot.gyroStrafeEncoder(.5, 90, 12);
                 robot.flimsyDown();
                 sleep(500);
                 robot.gyroStrafeEncoder(.5, -90, 20);
-                robot.gyroDriveEncoder(-.7, 135);
+                robot.gyroDriveEncoder(-.7, 85); //135
                 flimsy.setPosition(0.4);
                 sleep(500);
-                robot.gyroDriveEncoder(.7, 172);
+                robot.gyroDriveEncoder(.7, 194);
                 robot.gyroStrafeEncoder(.5, 90, 23);
                 robot.flimsyDown();
                 sleep(500);
@@ -172,10 +172,10 @@ public class AASkystoneSideBlue extends LinearOpMode
                 robot.gyroDriveEncoder(-1, 177);
                 flimsy.setPosition(0.4);
                 sleep(500);
-                robot.gyroDriveEncoder(1, 20);
+                robot.gyroDriveEncoder(1, 30);
                 break;
             case 2:
-                robot.gyroDriveEncoder(.5, 2);
+                robot.gyroDriveEncoder(-0.5, 0);
                 robot.gyroStrafeEncoder(.5, 90, 12);
                 robot.flimsyDown();
                 sleep(500);
@@ -195,7 +195,7 @@ public class AASkystoneSideBlue extends LinearOpMode
                 //new changes
                 break;
             case 1:
-                robot.gyroDriveEncoder(-.5, 12);
+                robot.gyroDriveEncoder(-.5, 10);
                 robot.gyroStrafeEncoder(.5, 90, 12);
                 robot.flimsyDown();
                 sleep(500);

@@ -166,8 +166,11 @@ public class MainTeleOp extends LinearOpMode {
                 clawMover.setPosition(ClawPosition);
             }
 
-            if(gamepad1.left_bumper){
-                capRelease.setPosition(1);
+            if(gamepad1.x){
+                capRelease.setPosition(0);
+            }
+            if (gamepad1.y){
+                capRelease.setPosition(0.7);
             }
 
             arm.setTargetPosition(arm.getCurrentPosition());
