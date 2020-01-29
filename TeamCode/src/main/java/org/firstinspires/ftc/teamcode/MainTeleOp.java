@@ -44,7 +44,7 @@ public class MainTeleOp extends LinearOpMode {
         clawMover = hardwareMap.crservo.get("clawMover");
         claw = hardwareMap.servo.get("claw");
 
-        motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
+        motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
         motorBackRight.setDirection(DcMotor.Direction.REVERSE);
         leftIntake.setDirection(CRServo.Direction.REVERSE);
 
