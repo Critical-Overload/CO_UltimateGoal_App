@@ -7,8 +7,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import java.math.BigDecimal;
-
 @TeleOp(name = "AAMainTeleOp")
 public class MainTeleOp extends LinearOpMode {
 
@@ -23,13 +21,8 @@ public class MainTeleOp extends LinearOpMode {
     private Servo leftIntakeServo;
     private Servo rightIntakeServo;
     private Servo flimsy;
-    private Servo clawMover;
+    private CRServo clawMover;
     private Servo claw;
-    private Servo capRelease;
-
-
-    double ap;
-    double ClawPosition;
 
     private DigitalChannel touch;
 
@@ -48,13 +41,10 @@ public class MainTeleOp extends LinearOpMode {
         leftIntakeServo = hardwareMap.servo.get("LIrelease");
         rightIntakeServo = hardwareMap.servo.get("RIrelease");
         flimsy = hardwareMap.servo.get("flimsy");
-        clawMover = hardwareMap.servo.get("clawMover");
+        clawMover = hardwareMap.crservo.get("clawMover");
         claw = hardwareMap.servo.get("claw");
-        capRelease = hardwareMap.servo.get("capRelease");
 
-
-
-        motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
+        motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
         motorBackRight.setDirection(DcMotor.Direction.REVERSE);
         leftIntake.setDirection(CRServo.Direction.REVERSE);
 
@@ -68,17 +58,13 @@ public class MainTeleOp extends LinearOpMode {
         arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
-
-
-
         double powerMod = 1.0;
         double intakeMod = 1.0;
 
         waitForStart();
 
-
         while(opModeIsActive()){
-            arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
             /*
             Checks if right bumper is pressed. If so, power is reduced
              */
@@ -124,65 +110,19 @@ public class MainTeleOp extends LinearOpMode {
                 claw.setPosition(1);
             }
 
-            if(gamepad2.right_stick_y != 0){
-                ap = arm.getCurrentPosition();
-                //clawMover.setPosition(ap/537.6);
+            arm.setPower(gamepad2.right_stick_y*0.5);
 
-            }
-
-            if(gamepad2.right_bumper){
-                arm.setTargetPosition(-50);
-                arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                arm.setPower(0.2);
-                while(arm.isBusy()){
-                    clawMover.setPosition(0.1);
-                }
-                arm.setPower(0);
-            }
-
-            if (gamepad2.left_bumper){
-                arm.setTargetPosition(650);
-                arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                arm.setPower(0.2);
-                while (arm.isBusy()){
-                    sleep(500);
-                    clawMover.setPosition(0.4);
-                }
-                arm.setPower(0);
-            }
-
+            clawMover.setPower(gamepad2.right_stick_y*0.25+gamepad2.left_stick_y*0.25);
 
             if(gamepad1.a){
                 flimsy.setPosition(flimsy.getPosition() + 0.01);
             }
+//kevin's left kidney
             if(gamepad1.b){
                 flimsy.setPosition(flimsy.getPosition() - 0.01);
             }
 
-            arm.setPower(gamepad2.right_stick_y);
-            while (gamepad2.right_stick_y != 0){
-                double Postion = arm.getCurrentPosition();
-                double ClawPosition = Postion/1400;
-                clawMover.setPosition(ClawPosition);
-            }
-
-            if(gamepad1.x){
-                capRelease.setPosition(0);
-            }
-            if (gamepad1.y){
-                capRelease.setPosition(0.7);
-            }
-
-            arm.setTargetPosition(arm.getCurrentPosition());
-
-
-            clawMover.setPosition(clawMover.getPosition()+gamepad2.left_stick_y*0.01);
-
-
-
             telemetry.addData("Flimsy servo position", flimsy.getPosition());
-            telemetry.addData("Arm Encoder Number", arm.getCurrentPosition());
-            telemetry.addData("Claw Mover Postion", ClawPosition);
 
             leftIntake.setPower((gamepad2.right_trigger * intakeMod)-(gamepad2.left_trigger * intakeMod));
             rightIntake.setPower((gamepad2.right_trigger * intakeMod)-(gamepad2.left_trigger * intakeMod));
