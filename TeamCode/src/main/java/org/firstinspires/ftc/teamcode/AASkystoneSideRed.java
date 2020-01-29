@@ -156,15 +156,15 @@ public class AASkystoneSideRed extends LinearOpMode
         //5,3,12
         switch(blockPosition){
             case 1:
-                robot.gyroDriveEncoder(-.5, 28);
-                robot.gyroStrafeEncoder(.5, 90, 12);
+                robot.gyroDriveEncoder(-.5, 30);
+                robot.gyroStrafeEncoder(.5, 90, 15);
                 robot.flimsyDown();
                 sleep(500);
-                robot.gyroStrafeEncoder(.5, -90, 20);
+                robot.gyroStrafeEncoder(.5, -90, 26);
                 robot.gyroDriveEncoder(.7, 135);
                 flimsy.setPosition(0.5);
                 sleep(500);
-                robot.gyroDriveEncoder(-.7, 182);
+                robot.gyroDriveEncoder(-.7, 175);
                 robot.gyroStrafeEncoder(.5, 90, 20);
                 robot.flimsyDown();
                 sleep(500);
@@ -173,22 +173,21 @@ public class AASkystoneSideRed extends LinearOpMode
                 flimsy.setPosition(0.4);
                 sleep(500);
                 robot.gyroDriveEncoder(-1, 20);
-                robot.gyroStrafeEncoder(1,90,10);
                 break;
             case 2:
-                robot.gyroDriveEncoder(-.5, 7);
+                robot.gyroDriveEncoder(-.5, 12);
                 robot.gyroStrafeEncoder(.5, 90, 12);
                 robot.flimsyDown();
                 sleep(500);
-                robot.gyroStrafeEncoder(.5, -90, 20);
+                robot.gyroStrafeEncoder(.5, -90, 17);
                 robot.gyroDriveEncoder(.7, 115);
                 flimsy.setPosition(0.5);
                 sleep(500);
-                robot.gyroDriveEncoder(-.7, 180);
-                robot.gyroStrafeEncoder(.5, 90, 20);
+                robot.gyroDriveEncoder(-.7, 177);
+                robot.gyroStrafeEncoder(.5, 90, 19);
                 robot.flimsyDown();
                 sleep(500);
-                robot.gyroStrafeEncoder(.5, -90, 25);
+                robot.gyroStrafeEncoder(.5, -90, 27);
                 robot.gyroDriveEncoder(1, 190);
                 flimsy.setPosition(0.4);
                 sleep(500);
@@ -196,8 +195,8 @@ public class AASkystoneSideRed extends LinearOpMode
                 //new changes
                 break;
             case 3:
-                robot.gyroDriveEncoder(.5, 10);
-                robot.gyroStrafeEncoder(.5, 90, 12);
+                robot.gyroDriveEncoder(.5, 5);
+                robot.gyroStrafeEncoder(.5, 90, 13);
                 robot.flimsyDown();
                 sleep(500);
                 robot.gyroStrafeEncoder(.5, -90, 20);
@@ -205,7 +204,7 @@ public class AASkystoneSideRed extends LinearOpMode
                 flimsy.setPosition(0.5);
                 sleep(500);
                 robot.gyroDriveEncoder(-.7, 155);
-                robot.gyroStrafeEncoder(.5, 90, 23);
+                robot.gyroStrafeEncoder(.5, 90, 20);
                 robot.flimsyDown();
                 sleep(500);
                 robot.gyroStrafeEncoder(.5, -90, 22);
@@ -213,8 +212,6 @@ public class AASkystoneSideRed extends LinearOpMode
                 flimsy.setPosition(0.4);
                 sleep(500);
                 robot.gyroDriveEncoder(-1, 20);
-                robot.gyroStrafeEncoder(1,90,10);
-
                 break;
             default:
                 break;
@@ -245,14 +242,7 @@ public class AASkystoneSideRed extends LinearOpMode
 
         @Override
         public Mat processFrame(Mat input) {
-            hsvImage.release();
-            buildplate.release();
-            blurImg.release();
-            cannyOutput.release();
             output.release();
-            yellow.release();
-            grey.release();
-            greyImg.release();
 
             input.copyTo(output);
             Mat mask = new Mat(input.rows(), input.cols(), CvType.CV_8U, Scalar.all(0));
@@ -342,6 +332,13 @@ public class AASkystoneSideRed extends LinearOpMode
             Imgproc.line(output, new Point(p1,0),new Point(p1,640),new Scalar(0,0,0),2);
             Imgproc.line(output, new Point(p2,0),new Point(p2,640),new Scalar(0,0,0),2);
 
+            hsvImage.release();
+            buildplate.release();
+            blurImg.release();
+            cannyOutput.release();
+            yellow.release();
+            grey.release();
+            greyImg.release();
 
             return output;
         }
