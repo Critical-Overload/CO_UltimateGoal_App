@@ -117,7 +117,6 @@ public class MainTeleOp extends LinearOpMode {
             if(gamepad1.a){
                 flimsy.setPosition(flimsy.getPosition() + 0.01);
             }
-//kevin's left kidney
             if(gamepad1.b){
                 flimsy.setPosition(flimsy.getPosition() - 0.01);
             }
