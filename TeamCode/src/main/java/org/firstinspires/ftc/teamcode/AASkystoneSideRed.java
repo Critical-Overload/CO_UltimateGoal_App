@@ -157,37 +157,37 @@ public class AASkystoneSideRed extends LinearOpMode
         switch(blockPosition){
             case 1:
                 robot.gyroDriveEncoder(-.5, 30);
-                robot.gyroStrafeEncoder(.5, 90, 15);
+                robot.gyroStrafeEncoder(.5, 90, 18);
                 robot.flimsyDown();
                 sleep(500);
-                robot.gyroStrafeEncoder(.5, -90, 26);
+                robot.gyroStrafeEncoder(.5, -90, 29);
                 robot.gyroDriveEncoder(.7, 135);
                 flimsy.setPosition(0.5);
                 sleep(500);
                 robot.gyroDriveEncoder(-.7, 175);
-                robot.gyroStrafeEncoder(.5, 90, 20);
+                robot.gyroStrafeEncoder(.5, 90, 25);
                 robot.flimsyDown();
                 sleep(500);
-                robot.gyroStrafeEncoder(.5, -90, 27);
-                robot.gyroDriveEncoder(1, 177);
+                robot.gyroStrafeEncoder(.5, -90, 32);
+                robot.gyroDriveEncoder(1, 175);
                 flimsy.setPosition(0.4);
                 sleep(500);
                 robot.gyroDriveEncoder(-1, 20);
                 break;
             case 2:
                 robot.gyroDriveEncoder(-.5, 12);
-                robot.gyroStrafeEncoder(.5, 90, 12);
+                robot.gyroStrafeEncoder(.5, 90, 16);
                 robot.flimsyDown();
                 sleep(500);
-                robot.gyroStrafeEncoder(.5, -90, 17);
+                robot.gyroStrafeEncoder(.5, -90, 21);
                 robot.gyroDriveEncoder(.7, 115);
                 flimsy.setPosition(0.5);
                 sleep(500);
                 robot.gyroDriveEncoder(-.7, 177);
-                robot.gyroStrafeEncoder(.5, 90, 19);
+                robot.gyroStrafeEncoder(.5, 90, 25);
                 robot.flimsyDown();
                 sleep(500);
-                robot.gyroStrafeEncoder(.5, -90, 27);
+                robot.gyroStrafeEncoder(.5, -90, 26);
                 robot.gyroDriveEncoder(1, 190);
                 flimsy.setPosition(0.4);
                 sleep(500);
@@ -196,18 +196,18 @@ public class AASkystoneSideRed extends LinearOpMode
                 break;
             case 3:
                 robot.gyroDriveEncoder(.5, 5);
-                robot.gyroStrafeEncoder(.5, 90, 13);
+                robot.gyroStrafeEncoder(.5, 90, 18);
                 robot.flimsyDown();
                 sleep(500);
-                robot.gyroStrafeEncoder(.5, -90, 20);
+                robot.gyroStrafeEncoder(.5, -90, 25);
                 robot.gyroDriveEncoder(.7, 95);
                 flimsy.setPosition(0.5);
                 sleep(500);
                 robot.gyroDriveEncoder(-.7, 155);
-                robot.gyroStrafeEncoder(.5, 90, 20);
+                robot.gyroStrafeEncoder(.5, 90, 23);
                 robot.flimsyDown();
                 sleep(500);
-                robot.gyroStrafeEncoder(.5, -90, 22);
+                robot.gyroStrafeEncoder(.5, -90, 23);
                 robot.gyroDriveEncoder(1, 150);
                 flimsy.setPosition(0.4);
                 sleep(500);
@@ -332,6 +332,7 @@ public class AASkystoneSideRed extends LinearOpMode
             Imgproc.line(output, new Point(p1,0),new Point(p1,640),new Scalar(0,0,0),2);
             Imgproc.line(output, new Point(p2,0),new Point(p2,640),new Scalar(0,0,0),2);
 
+            //clear all data
             hsvImage.release();
             buildplate.release();
             blurImg.release();
