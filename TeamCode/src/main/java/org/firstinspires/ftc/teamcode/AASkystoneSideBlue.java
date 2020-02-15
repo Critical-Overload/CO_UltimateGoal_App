@@ -238,10 +238,11 @@ public class AASkystoneSideBlue extends LinearOpMode
         Scalar myColor = new Scalar(0,255,255);
         Mat grey = new Mat();
         Mat greyImg = new Mat();
+        Mat hierachy = new Mat();
+
 
         @Override
         public Mat processFrame(Mat input) {
-            output.release();
 
             input.copyTo(output);
             Mat mask = new Mat(input.rows(), input.cols(), CvType.CV_8U, Scalar.all(0));
@@ -269,10 +270,10 @@ public class AASkystoneSideBlue extends LinearOpMode
 
             //find yellow contours
             Core.inRange(hsvImage, new Scalar((huetwo / 2) - sensitivity, 100, 50), new Scalar((huetwo / 2) + sensitivity, 255, 255), yellow);
-            Imgproc.findContours(yellow, ycontours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+            Imgproc.findContours(yellow, ycontours, hierachy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 
             Core.inRange(hsvImage, new Scalar((hue / 2) - sensitivity, 100, 50), new Scalar((hue / 2) + sensitivity, 255, 255), buildplate);
-            Imgproc.findContours(buildplate, bcontours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+            Imgproc.findContours(buildplate, bcontours, hierachy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 
 
 
@@ -302,7 +303,7 @@ public class AASkystoneSideBlue extends LinearOpMode
                 //find black contours
                 Imgproc.cvtColor(input,grey, Imgproc.COLOR_RGB2GRAY);
                 Imgproc.threshold(grey, greyImg,30,255,Imgproc.THRESH_BINARY_INV);
-                Imgproc.findContours(greyImg, scontours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+                Imgproc.findContours(greyImg, scontours, hierachy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
             }
 
             if(scontours.size()>0)
@@ -332,13 +333,8 @@ public class AASkystoneSideBlue extends LinearOpMode
             Imgproc.line(output, new Point(p1,0),new Point(p1,640),new Scalar(0,0,0),2);
             Imgproc.line(output, new Point(p2,0),new Point(p2,640),new Scalar(0,0,0),2);
 
-            hsvImage.release();
-            buildplate.release();
-            blurImg.release();
-            cannyOutput.release();
-            yellow.release();
-            grey.release();
-            greyImg.release();
+            mask.release();
+            cropped.release();
 
             return output;
         }

@@ -21,20 +21,13 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
-import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
@@ -44,66 +37,28 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 import org.openftc.easyopencv.OpenCvPipeline;
-import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-@Autonomous(name = "AASkystoneSideRed")
-public class AASkystoneSideRed extends LinearOpMode
+@TeleOp (name = "MemoryLeakTestRed")
+public class MemoryLeakTestRed extends LinearOpMode
 {
+
     double hue;
     double huetwo;
-    OpenCvCamera webcam;
-    MainPipeline mainPipeline;
     double threshold = 150;
     double sensitivity;
+    OpenCvCamera phoneCam;
+
+    MainPipeline mainPipeline;
     String side = "";
-    int p1 = 100;
-    int p2 = 320;
-    int cycle = 0;
 
-    private DcMotor motorFrontRight;
-    private DcMotor motorFrontLeft;
-    private DcMotor motorBackRight;
-    private DcMotor motorBackLeft;
-    private CRServo leftIntake;
-    private CRServo rightIntake;
-    private Servo leftIntakeServo;
-    private Servo rightIntakeServo;
-    private Servo flimsy;
-
-    //Declare imu
-    private BNO055IMU imu;
 
     @Override
-    public void runOpMode() throws InterruptedException
+    public void runOpMode()
     {
-        motorFrontRight = hardwareMap.dcMotor.get("FR");
-        motorFrontLeft = hardwareMap.dcMotor.get("FL");
-        motorBackRight = hardwareMap.dcMotor.get("BR");
-        motorBackLeft = hardwareMap.dcMotor.get("BL");
-        leftIntake = hardwareMap.crservo.get("LI");
-        rightIntake = hardwareMap.crservo.get("RI");
-        leftIntakeServo = hardwareMap.servo.get("LIrelease");
-        rightIntakeServo = hardwareMap.servo.get("RIrelease");
-        flimsy = hardwareMap.servo.get("flimsy");
-
-        //Initialize imu
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        //Reverse requred motors
-
-        //Set zero power behaviors to brake
-        motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        //Create an IMURobot object that we will use to run the robot
-        IMURobot robot = new IMURobot(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft, imu, leftIntake, rightIntake, leftIntakeServo, rightIntakeServo, flimsy, this);
-        robot.setupRobot();//calibrate IMU, set any required parameters
-
         /*
          * Instantiate an OpenCvCamera object for the camera we'll be using.
          * In this sample, we're using the phone's internal camera. We pass it a
@@ -113,116 +68,91 @@ public class AASkystoneSideRed extends LinearOpMode
          * single-parameter constructor instead (commented out below)
          */
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webcam = new OpenCvWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        phoneCam = new OpenCvInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
+
 
         // OR...  Do Not Activate the Camera Monitor View
         //phoneCam = new OpenCvInternalCamera(OpenCvInternalCamera.CameraDirection.BACK);
 
-        webcam.openCameraDevice();
+        /*
+         * Open the connection to the camera device
+         */
+        phoneCam.openCameraDevice();
 
+        /*
+         * Specify the image processing pipeline we wish to invoke upon receipt
+         * of a frame from the camera. Note that switching pipelines on-the-fly
+         * (while a streaming session is in flight) *IS* supported.
+         */
         mainPipeline = new MainPipeline();
 
-        webcam.setPipeline(mainPipeline);
+        phoneCam.setPipeline(mainPipeline);
 
+        /*
+         * Tell the camera to start streaming images to us! Note that you must make sure
+         * the resolution you specify is supported by the camera. If it is not, an exception
+         * will be thrown.
+         *
+         * Also, we specify the rotation that the camera is used in. This is so that the image
+         * from the camera sensor can be rotated such that it is always displayed with the image upright.
+         * For a front facing camera, rotation is defined assuming the user is looking at the screen.
+         * For a rear facing camera or a webcam, rotation is defined assuming the camera is facing
+         * away from the user.
+         */
+        phoneCam.startStreaming(640, 480, OpenCvCameraRotation.SIDEWAYS_LEFT);
 
-        webcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
-
-        telemetry.addData("Center Point", mainPipeline.bcenterx + "," + mainPipeline.bcentery);
-        //Input Upright Mid Point: 240,320
-        //Input Sideways Mid Point: 320,240
-
-        telemetry.addData("Cycle:", cycle);
-        telemetry.update();
-
+        /*
+         * Wait for the user to press start on the Driver Station
+         */
         waitForStart();
-        //  int left = 0, center = 0, right = 0;
-        int blockPosition = 0;
 
-        int currentPos = mainPipeline.scenterx;
+        while (opModeIsActive())
+        {
+            /*
+             * Send some stats to the telemetry
+             */
 
+            telemetry.addData("Center Point", mainPipeline.bcenterx + "," + mainPipeline.bcentery);
+            //Input Upright Mid Point: 240,320
+            //Input Sideways Mid Point: 320,240
+            double inputCenterX = 240;
+            double accuracy = 30;
+            if (mainPipeline.bcenterx > inputCenterX + accuracy){
+                side = "Right";
+            }else if (mainPipeline.bcenterx < inputCenterX - accuracy){
+                side = "Left";
+            }
+            else{
+                side = "In the Center";
+            }
+            telemetry.addData("Side to Move:",side );
 
-        if(currentPos > 0 && currentPos < p1){
-            blockPosition = 1;
-        }else if(currentPos > p1 && currentPos < p2){
-            blockPosition = 2;
-        }else if(currentPos > p2 && currentPos < 500){
-            blockPosition = 3;
+            telemetry.addData("Frame Count", phoneCam.getFrameCount());
+            telemetry.addData("FPS", String.format("%.2f", phoneCam.getFps()));
+            telemetry.addData("Total frame time ms", phoneCam.getTotalFrameTimeMs());
+            telemetry.addData("Pipeline time ms", phoneCam.getPipelineTimeMs());
+            telemetry.addData("Overhead time ms", phoneCam.getOverheadTimeMs());
+            telemetry.addData("Theoretical max FPS", phoneCam.getCurrentPipelineMaxFps());
+
+            telemetry.update();
         }
-
-        telemetry.addData("bp", blockPosition);
-        telemetry.addData("cp", mainPipeline.scenterx);
-        telemetry.update();
-        sleep(1000);
-        // 0 = foundation
-        // 1 = skystone
-        robot.flimsyUp();
-        robot.gyroStrafeEncoder(1,90,64);
-        //5,3,12
-        switch(blockPosition){
-            case 1:
-                robot.gyroDriveEncoder(-.5, 30);
-                robot.gyroStrafeEncoder(.5, 90, 18);
-                robot.flimsyDown();
-                sleep(500);
-                robot.gyroStrafeEncoder(.5, -90, 29);
-                robot.gyroDriveEncoder(.7, 135);
-                flimsy.setPosition(0.5);
-                sleep(500);
-                robot.gyroDriveEncoder(-.7, 175);
-                robot.gyroStrafeEncoder(.5, 90, 25);
-                robot.flimsyDown();
-                sleep(500);
-                robot.gyroStrafeEncoder(.5, -90, 32);
-                robot.gyroDriveEncoder(1, 175);
-                flimsy.setPosition(0.4);
-                sleep(500);
-                robot.gyroDriveEncoder(-1, 20);
-                break;
-            case 2:
-                robot.gyroDriveEncoder(-.5, 12);
-                robot.gyroStrafeEncoder(.5, 90, 16);
-                robot.flimsyDown();
-                sleep(500);
-                robot.gyroStrafeEncoder(.5, -90, 21);
-                robot.gyroDriveEncoder(.7, 115);
-                flimsy.setPosition(0.5);
-                sleep(500);
-                robot.gyroDriveEncoder(-.7, 177);
-                robot.gyroStrafeEncoder(.5, 90, 25);
-                robot.flimsyDown();
-                sleep(500);
-                robot.gyroStrafeEncoder(.5, -90, 26);
-                robot.gyroDriveEncoder(1, 190);
-                flimsy.setPosition(0.4);
-                sleep(500);
-                robot.gyroDriveEncoder(-1, 25);
-                //new changes
-                break;
-            case 3:
-                robot.gyroDriveEncoder(.5, 5);
-                robot.gyroStrafeEncoder(.5, 90, 18);
-                robot.flimsyDown();
-                sleep(500);
-                robot.gyroStrafeEncoder(.5, -90, 25);
-                robot.gyroDriveEncoder(.7, 95);
-                flimsy.setPosition(0.5);
-                sleep(500);
-                robot.gyroDriveEncoder(-.7, 155);
-                robot.gyroStrafeEncoder(.5, 90, 23);
-                robot.flimsyDown();
-                sleep(500);
-                robot.gyroStrafeEncoder(.5, -90, 23);
-                robot.gyroDriveEncoder(1, 150);
-                flimsy.setPosition(0.4);
-                sleep(500);
-                robot.gyroDriveEncoder(-1, 20);
-                break;
-            default:
-                break;
-        }
-
     }
 
+    /*
+     * An example image processing pipeline to be run upon receipt of each frame from the camera.
+     * Note that the processFrame() method is called serially from the frame worker thread -
+     * that is, a new camera frame will not come in while you're still processing a previous one.
+     * In other words, the processFrame() method will never be called multiple times simultaneously.
+     *
+     * However, the rendering of your processed image to the viewport is done in parallel to the
+     * frame worker thread. That is, the amount of time it takes to render the image to the
+     * viewport does NOT impact the amount of frames per second that your pipeline can process.
+     *
+     * IMPORTANT NOTE: this pipeline is NOT invoked on your OpMode thread. It is invoked on the
+     * frame worker thread. This should not be a problem in the vast majority of cases. However,
+     * if you're doing something weird where you do need it synchronized with your OpMode thread,
+     * then you will need to account for that accordingly.
+     */
     class MainPipeline extends OpenCvPipeline
     {
         List<MatOfPoint> bcontours = new ArrayList<>();
@@ -243,10 +173,11 @@ public class AASkystoneSideRed extends LinearOpMode
         Scalar myColor = new Scalar(0,255,255);
         Mat grey = new Mat();
         Mat greyImg = new Mat();
-        Mat hierachy = new Mat();
+        Mat heirachy = new Mat();
 
         @Override
         public Mat processFrame(Mat input) {
+
             input.copyTo(output);
             Mat mask = new Mat(input.rows(), input.cols(), CvType.CV_8U, Scalar.all(0));
             Mat cropped = new Mat(input.size(),input.type(),myColor);
@@ -273,10 +204,10 @@ public class AASkystoneSideRed extends LinearOpMode
 
             //find yellow contours
             Core.inRange(hsvImage, new Scalar((huetwo / 2) - sensitivity, 100, 50), new Scalar((huetwo / 2) + sensitivity, 255, 255), yellow);
-            Imgproc.findContours(yellow, ycontours, hierachy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+            Imgproc.findContours(yellow, ycontours, heirachy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 
             Core.inRange(hsvImage, new Scalar((hue / 2) - sensitivity, 100, 50), new Scalar((hue / 2) + sensitivity, 255, 255), buildplate);
-            Imgproc.findContours(buildplate, bcontours, hierachy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+            Imgproc.findContours(buildplate, bcontours, heirachy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 
 
 
@@ -306,7 +237,7 @@ public class AASkystoneSideRed extends LinearOpMode
                 //find black contours
                 Imgproc.cvtColor(input,grey, Imgproc.COLOR_RGB2GRAY);
                 Imgproc.threshold(grey, greyImg,25,255,Imgproc.THRESH_BINARY_INV);
-                Imgproc.findContours(greyImg, scontours, hierachy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+                Imgproc.findContours(greyImg, scontours, heirachy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
             }
 
             if(scontours.size()>0)
@@ -332,14 +263,13 @@ public class AASkystoneSideRed extends LinearOpMode
                 scentery = (slargestRect.y + slargestRect.y + slargestRect.height)/2;
 
             }
-            Imgproc.line(output, new Point(p1,0),new Point(p1,640),new Scalar(0,0,0),2);
-            Imgproc.line(output, new Point(p2,0),new Point(p2,640),new Scalar(0,0,0),2);
 
             mask.release();
             cropped.release();
 
             return output;
         }
-
     }
+
+
 }
