@@ -50,7 +50,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-@Autonomous(name = "AASkystoneSideRed")
+@Autonomous(name = "AAASkystoneSideRed")
 public class AASkystoneSideRed extends LinearOpMode
 {
     double hue;
@@ -160,13 +160,13 @@ public class AASkystoneSideRed extends LinearOpMode
         //5,3,12
         switch(blockPosition){
             case 1:
-                robot.gyroDriveEncoder(-.5, 30);
+                robot.gyroDriveEncoder(-.5, 32);
                 robot.gyroStrafeEncoder(.5, 90, 18);
                 robot.flimsyDown();
                 sleep(500);
                 robot.gyroStrafeEncoder(.5, -90, 29);
                 robot.gyroDriveEncoder(.7, 135);
-                flimsy.setPosition(0.5);
+                robot.flimsyUp();
                 sleep(500);
                 robot.gyroDriveEncoder(-.7, 175);
                 robot.gyroStrafeEncoder(.5, 90, 25);
@@ -174,7 +174,7 @@ public class AASkystoneSideRed extends LinearOpMode
                 sleep(500);
                 robot.gyroStrafeEncoder(.5, -90, 32);
                 robot.gyroDriveEncoder(1, 175);
-                flimsy.setPosition(0.4);
+                robot.flimsyUp();
                 sleep(500);
                 robot.gyroDriveEncoder(-1, 20);
                 break;
@@ -185,7 +185,7 @@ public class AASkystoneSideRed extends LinearOpMode
                 sleep(500);
                 robot.gyroStrafeEncoder(.5, -90, 21);
                 robot.gyroDriveEncoder(.7, 115);
-                flimsy.setPosition(0.5);
+                robot.flimsyUp();
                 sleep(500);
                 robot.gyroDriveEncoder(-.7, 177);
                 robot.gyroStrafeEncoder(.5, 90, 25);
@@ -193,7 +193,7 @@ public class AASkystoneSideRed extends LinearOpMode
                 sleep(500);
                 robot.gyroStrafeEncoder(.5, -90, 26);
                 robot.gyroDriveEncoder(1, 190);
-                flimsy.setPosition(0.4);
+                robot.flimsyUp();
                 sleep(500);
                 robot.gyroDriveEncoder(-1, 25);
                 //new changes
@@ -205,15 +205,15 @@ public class AASkystoneSideRed extends LinearOpMode
                 sleep(500);
                 robot.gyroStrafeEncoder(.5, -90, 25);
                 robot.gyroDriveEncoder(.7, 95);
-                flimsy.setPosition(0.5);
+                robot.flimsyUp();
                 sleep(500);
-                robot.gyroDriveEncoder(-.7, 155);
+                robot.gyroDriveEncoder(-.7, 157);
                 robot.gyroStrafeEncoder(.5, 90, 23);
                 robot.flimsyDown();
                 sleep(500);
                 robot.gyroStrafeEncoder(.5, -90, 23);
                 robot.gyroDriveEncoder(1, 150);
-                flimsy.setPosition(0.4);
+                robot.flimsyUp();
                 sleep(500);
                 robot.gyroDriveEncoder(-1, 20);
                 break;

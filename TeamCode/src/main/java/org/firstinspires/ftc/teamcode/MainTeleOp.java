@@ -121,6 +121,7 @@ public class MainTeleOp extends LinearOpMode {
                 flimsy.setPosition(flimsy.getPosition() - 0.01);
             }
 
+
             telemetry.addData("Flimsy servo position", flimsy.getPosition());
 
             leftIntake.setPower((gamepad2.right_trigger * intakeMod)-(gamepad2.left_trigger * intakeMod));

@@ -50,7 +50,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-@Autonomous(name = "AASkystoneSideBlue")
+@Autonomous(name = "AAASkystoneSideBlue")
 public class AASkystoneSideBlue extends LinearOpMode
 {
     double hue;
@@ -60,7 +60,7 @@ public class AASkystoneSideBlue extends LinearOpMode
     double threshold = 150;
     double sensitivity;
     String side = "";
-    int p1 = 240;
+    int p1 = 260;
     int p2 = 450;
 
     private DcMotor motorFrontRight;
@@ -156,61 +156,69 @@ public class AASkystoneSideBlue extends LinearOpMode
         //5,3,12
         switch(blockPosition){
             case 3:
-                robot.gyroDriveEncoder(.5, 12);
-                robot.gyroStrafeEncoder(.5, 90, 16);
+                robot.gyroDriveEncoder(0.5, 12);
+                robot.gyroStrafeEncoder(1, 90, 15);
                 robot.flimsyDown();
                 sleep(500);
-                robot.gyroStrafeEncoder(.5, -90, 27);
-                robot.gyroDriveEncoder(-.7, 135); //135
-                flimsy.setPosition(0.4);
+                robot.gyroStrafeEncoder(0.7, -90, 23);
+                robot.gyroDriveEncoder(-1, 135); //135
+                robot.flimsyUp();
                 sleep(500);
-                robot.gyroDriveEncoder(.7, 191);
-                robot.gyroStrafeEncoder(.5, 90, 30);
+                robot.gyroDriveEncoder(1, 203);
+                robot.gyroStrafeEncoder(0.7, 90, 23);
                 robot.flimsyDown();
                 sleep(500);
-                robot.gyroStrafeEncoder(.5, -90, 28);
-                robot.gyroDriveEncoder(-1, 183);
-                flimsy.setPosition(0.4);
+                robot.gyroStrafeEncoder(1, -90, 32);
+                robot.gyroDriveEncoder(-0.7, 180);
+                robot.flimsyUp();
                 sleep(500);
-                robot.gyroDriveEncoder(1, 39);
+                robot.gyroDriveEncoder(1, 30);
+                robot.gyroStrafeEncoder(0.7, 90, 5);
+
                 break;
             case 2:
-                robot.gyroDriveEncoder(-0.5, 6);
-                robot.gyroStrafeEncoder(.5, 90, 16);
+                robot.gyroDriveEncoder(-0.5, 4);
+                robot.gyroStrafeEncoder(.7, 90, 15);
                 robot.flimsyDown();
                 sleep(500);
-                robot.gyroStrafeEncoder(.5, -90, 26);
-                robot.gyroDriveEncoder(-.5, 115);
-                flimsy.setPosition(0.4);
+                robot.gyroStrafeEncoder(0.7, -90, 23);
+                robot.gyroDriveEncoder(-1, 115);
+                robot.flimsyUp();
                 sleep(500);
-                robot.gyroDriveEncoder(.7, 173);
-                robot.gyroStrafeEncoder(.5, 90, 35);
+                robot.gyroDriveEncoder(1, 178);
+                robot.gyroStrafeEncoder(0.7, 90, 23);
                 robot.flimsyDown();
                 sleep(500);
-                robot.gyroStrafeEncoder(.5, -90, 31);
-                robot.gyroDriveEncoder(-1, 190);
-                flimsy.setPosition(0.4);
+                robot.gyroStrafeEncoder(0.7, -90, 32);
+                robot.gyroDriveEncoder(0.5, 25);
+                robot.gyroDriveEncoder(-1, 180);
+                robot.flimsyUp();
                 sleep(500);
-                robot.gyroDriveEncoder(1, 43);
+                robot.gyroDriveEncoder(1, 30);
+                robot.gyroStrafeEncoder(0.5, 90,5);
+
                 break;
             case 1:
-                robot.gyroDriveEncoder(-.5, 25);
-                robot.gyroStrafeEncoder(.5, 90, 15);
+                robot.gyroDriveEncoder(-0.5, 25);
+                robot.gyroStrafeEncoder(0.7, 90, 15);
                 robot.flimsyDown();
                 sleep(500);
-                robot.gyroStrafeEncoder(.5, -90, 23);
-                robot.gyroDriveEncoder(-.7, 90);
-                flimsy.setPosition(0.4);
+                robot.gyroStrafeEncoder(0.7, -90, 23);
+                robot.gyroDriveEncoder(-1, 90);
+                robot.flimsyUp();
                 sleep(500);
-                robot.gyroDriveEncoder(.7, 155);
-                robot.gyroStrafeEncoder(.5, 90, 26);
+                robot.gyroDriveEncoder(1, 158);
+                robot.gyroStrafeEncoder(0.7, 90, 23);
                 robot.flimsyDown();
                 sleep(500);
-                robot.gyroStrafeEncoder(.5, -90, 26);
-                robot.gyroDriveEncoder(-1, 150);
-                flimsy.setPosition(0.4);
+                robot.gyroStrafeEncoder(0.7, -90, 32);
+                robot.gyroDriveEncoder(0.5, 45);
+                robot.gyroDriveEncoder(-1, 180);
+                robot.flimsyUp();
                 sleep(500);
-                robot.gyroDriveEncoder(1, 23);
+                robot.gyroDriveEncoder(1, 30);
+                robot.gyroStrafeEncoder(0.5, 90,5);
+
                 break;
             default:
                 break;
