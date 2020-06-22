@@ -101,6 +101,8 @@ public class AAFoundationSideRed extends LinearOpMode
         robot.setupRobot();//calibrate IMU, set any required parameters
 
         waitForStart();
+
+        //Move
         robot.gyroStrafeEncoder(1,90,72);
         robot.gyroDriveEncoder(1, 12);
         robot.flimsyDown();
