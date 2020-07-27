@@ -74,6 +74,7 @@ public class MainTeleOp extends LinearOpMode {
                 powerMod = 1.0;
             }
 
+            //slows down the input wheels if needed
             if(gamepad2.left_bumper){
                 intakeMod = 0.5;
             }else{
