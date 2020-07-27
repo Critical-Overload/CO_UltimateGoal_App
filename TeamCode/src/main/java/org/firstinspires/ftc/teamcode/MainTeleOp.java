@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "AAMainTeleOp")
 public class MainTeleOp extends LinearOpMode {
-
+    //declare motors, servos
     private DcMotor motorFrontRight;
     private DcMotor motorFrontLeft;
     private DcMotor motorBackLeft;
@@ -24,7 +24,7 @@ public class MainTeleOp extends LinearOpMode {
     private CRServo clawMover;
     private Servo claw;
 
-    private DigitalChannel touch;
+    private DigitalChannel touch;//touch sensor was not used
 
     @Override
     public void runOpMode() throws InterruptedException {
