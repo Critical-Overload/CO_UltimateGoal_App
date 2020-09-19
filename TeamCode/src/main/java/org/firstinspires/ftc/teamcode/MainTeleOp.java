@@ -28,14 +28,14 @@ public class MainTeleOp extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-
+        //testing push by Jolie
         motorFrontRight = hardwareMap.dcMotor.get("FR");
         motorFrontLeft = hardwareMap.dcMotor.get("FL");
         motorBackLeft = hardwareMap.dcMotor.get("BL");
         motorBackRight = hardwareMap.dcMotor.get("BR");
-        arm = hardwareMap.dcMotor.get("arm");
+        arm = hardwareMap.dcMotor.get("arm");//
 
-        leftIntake = hardwareMap.crservo.get("LI");
+        leftIntake = hardwareMap.crservo.get("LI");//
         rightIntake = hardwareMap.crservo.get("RI");
 
         leftIntakeServo = hardwareMap.servo.get("LIrelease");
